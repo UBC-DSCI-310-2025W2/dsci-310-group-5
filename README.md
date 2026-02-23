@@ -6,7 +6,7 @@ Authors: Audrey Vo, Roxanna Ng, Nikita Prabhu, Philip Chen
 [summary]
 
 ## Report
-Clicke [here] to find the analysis report.
+Click [here] to find the analysis report.
 
 ## Running the Analysis
 We use a Docker container image for project reproducibility....
