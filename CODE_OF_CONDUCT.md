@@ -20,5 +20,6 @@ In the event of a violation of the Code of Conduct, please contact the DSCI 310 
 
 This code of conduct was written with reference to the following sources:
 
-https://ubc-dsci.github.io/dsci-310-student/coc.html
-https://projectinclude.org/writing_cocs#
+* https://ubc-dsci.github.io/dsci-310-student/coc.html
+
+* https://projectinclude.org/writing_cocs#
