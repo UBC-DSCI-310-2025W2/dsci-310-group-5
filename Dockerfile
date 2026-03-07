@@ -14,9 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     git \
     python3-pip \
+    jupyter-notebook \
     && rm -rf /var/lib/apt/lists/*
-
-RUN pip3 install jupyter
 
 # Copy renv files first (for caching)
 COPY renv.lock renv.lock
