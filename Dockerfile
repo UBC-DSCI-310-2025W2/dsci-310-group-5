@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip3 install jupyter
+
 # Copy renv files first (for caching)
 COPY renv.lock renv.lock
 COPY renv/ renv/
@@ -23,10 +25,10 @@ COPY renv/ renv/
 # Install renv
 RUN R -e "install.packages('renv', repos='https://cloud.r-project.org')"
 
-# Force renv to restore using binaries when possible
-RUN R -e "options(renv.download.method = 'libcurl'); renv::restore(prompt = FALSE, rebuild = FALSE)"
+# Activate renv and restore packages to the project library
+RUN R -e "renv::activate(project = '/project'); renv::restore(prompt = FALSE, rebuild = TRUE)"
 
-# Copy project files
+# Copy the rest of your project files
 COPY . .
 
 # Run notebook (or R script)
