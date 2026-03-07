@@ -1,15 +1,25 @@
-FROM rocker/r-ver:4.5.2
+FROM rocker/rstudio:4.4.2
 
-WORKDIR /analysis
+# Install system dependencies needed for common R packages
+RUN apt-get update && apt-get install -y \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# install required R packages
-RUN R -e "install.packages(c('fivethirtyeight','dplyr','ggplot2','tidymodels'), repos='https://cloud.r-project.org/')"
+# Set working directory
+WORKDIR /project
 
-# copy project files
+# Copy renv files first (better caching)
+COPY renv.lock renv.lock
+COPY renv/ renv/
+
+# Install renv
+RUN R -e "install.packages('renv', repos='https://cloud.r-project.org')"
+
+# Restore packages EXACTLY from lockfile
+RUN R -e "renv::restore(prompt = FALSE)"
+
 COPY . .
 
-# run the analysis
-CMD ["Rscript", "analysis.R"]
-
-# Run the R script
-CMD ["Rscript", "analysis_movie-revenue.ipynb"]
+CMD ["Rscript", "src/analysis_movie-revenue.ipynb"]
