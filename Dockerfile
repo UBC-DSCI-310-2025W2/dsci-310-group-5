@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev \
     libgit2-dev \
     build-essential \
+    libzmq3-dev \
     wget \
     git \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy renv files first (for caching)
