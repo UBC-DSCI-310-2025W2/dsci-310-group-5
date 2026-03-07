@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev \
     libxml2-dev \
     libgit2-dev \
+    libglpk-dev \
     build-essential \
     libzmq3-dev \
     wget \
