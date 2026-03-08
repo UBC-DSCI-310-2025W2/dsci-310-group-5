@@ -33,6 +33,9 @@ More information about renv can be found [here](https://rstudio.github.io/renv/)
 ## Running the Analysis
 We use a Docker container image for project reproducibility.
 
+To reproduce the analysis, you can run the container either non-interactively or interactively.
+
+## Running it Non-interactively
 ### Pull the Docker image
 ```bash
 docker pull audreyvo/dsci-310-group-5:latest
@@ -47,6 +50,22 @@ docker run -p 8888:8888 -v $(pwd):/project audreyvo/dsci-310-group-5:latest
 ```
 
 You can access and run the Jupyter notebook by clicking the link(s) that docker run outputs.
+
+
+## Running it Interactively
+Navigate to the root of the directory in your terminal and enter:
+
+```bash
+docker-compose up
+```
+
+You can access and run the Jupyter notebook by clicking the link(s) outputted.
+
+When finished, enter the following command to remove the container.
+
+```bash
+docker-compose down
+```
 
 ## License Information
 The source code for this project is licensed under the MIT License.
