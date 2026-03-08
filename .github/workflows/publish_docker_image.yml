@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - 'Dockerfile'
-      - .github/workflows/docker-publish.yml
+      - .github/workflows/publish_docker_image.yml
       - 'renv.lock'
 
 jobs:
