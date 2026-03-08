@@ -7,7 +7,7 @@ This study investigates how **movie production budget predicts domestic box offi
 
 Using the **Bechdel Test movie dataset** from FiveThirtyEight, we perform exploratory data analysis and build a linear regression and K-nearest neighbours model to determine whether movie budget can predict domestic box office revenue.
 
-Our analysis finds that both linear regression and K-nearest neighbours perform very similarly, suggesting that movie budget has a moderately predictive relationship with box office revenue, but is not a complete predictor of financial success.
+Our analysis finds that both linear regression and K-nearest neighbours perform very similarly, and suggests that movie budget has a moderately predictive relationship with box office revenue, but is not a complete predictor of financial success.
 
 This project also aims to emphasize reproducible data science practices by utilizing version control using GitHub and reproducible environments using Docker containers.
 
