@@ -1,0 +1,7 @@
+     budget             domgross           log_budget      log_domgross   
+ Min.   :     7000   Min.   :      828   Min.   : 8.854   Min.   : 6.719  
+ 1st Qu.: 12000000   1st Qu.: 16320870   1st Qu.:16.300   1st Qu.:16.608  
+ Median : 30000000   Median : 42239614   Median :17.217   Median :17.559  
+ Mean   : 45174408   Mean   : 69170974   Mean   :16.966   Mean   :17.217  
+ 3rd Qu.: 60000000   3rd Qu.: 93382814   3rd Qu.:17.910   3rd Qu.:18.352  
+ Max.   :425000000   Max.   :760507625   Max.   :19.868   Max.   :20.449  
