@@ -1,5 +1,5 @@
 "Usage:
-  download_data.R --input=<url> [--output=<path>]
+  01-download_data.R --input=<url> [--output=<path>]
 
 Options:
   --input=<url>   URL to download data from
@@ -7,7 +7,11 @@ Options:
 " -> doc
 
 library(docopt)
-opt <- docopt(doc)
 
-dir.create(dirname(opt$output), recursive = TRUE, showWarnings = FALSE)
-write.csv(read.csv(opt$input), opt$output, row.names = FALSE)
+main <- function(input, output) {
+  dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
+  write.csv(read.csv(input), output, row.names = FALSE)
+}
+
+opt <- docopt(doc)
+main(opt$input, opt$output)

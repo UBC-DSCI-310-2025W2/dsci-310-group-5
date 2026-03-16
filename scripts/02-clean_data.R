@@ -9,12 +9,15 @@ Options:
 library(docopt)
 library(dplyr)
 
+main <- function(input, output) {
+  data <- read.csv(input) %>%
+    select(budget, domgross) %>%
+    filter(!is.na(budget), !is.na(domgross), budget > 0, domgross > 0) %>%
+    mutate(log_budget = log(budget), log_domgross = log(domgross))
+
+  dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
+  write.csv(data, output, row.names = FALSE)
+}
+
 opt <- docopt(doc)
-
-data <- read.csv(opt$input) %>%
-  select(budget, domgross) %>%
-  filter(!is.na(budget), !is.na(domgross), budget > 0, domgross > 0) %>%
-  mutate(log_budget = log(budget), log_domgross = log(domgross))
-
-dir.create(dirname(opt$output), recursive = TRUE, showWarnings = FALSE)
-write.csv(data, opt$output, row.names = FALSE)
+main(opt$input, opt$output)
