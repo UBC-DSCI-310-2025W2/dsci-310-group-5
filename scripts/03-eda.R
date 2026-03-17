@@ -3,7 +3,7 @@
 
 Options:
   --input=<path>   Path to data
-  --output=<path>  Path/filename prefix
+  --output=<path>  Path/filename prefix (e.g. results/eda)
 " -> doc
 
 library(docopt)
@@ -14,7 +14,7 @@ main <- function(input, output) {
   out <- dirname(output)
   dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
-  writeLines(capture.output(summary(data)), paste0(out, "/eda_summary.csv"))
+  writeLines(capture.output(summary(data)), paste0(out, "/eda_summary.txt"))
 
   png(paste0(out, "/eda_boxplot.png"))
   par(mfrow = c(1, 2))
@@ -28,13 +28,15 @@ main <- function(input, output) {
 
   ggsave(paste0(out, "/eda_scatter_raw.png"),
     ggplot(data, aes(budget, domgross)) + geom_point() + geom_smooth(method = "lm") +
-    labs(title = "Domestic Revenue vs Movie Budget", x = "Budget (USD)", y = "Revenue (USD)"))
+    labs(title = "Domestic Revenue vs Movie Budget", x = "Budget (USD)", y = "Revenue (USD)"),
+    width = 6, height = 4, dpi = 150)
 
   write.csv(data.frame(correlation = cor(data$budget, data$domgross)), paste0(out, "/eda_correlation.csv"), row.names = FALSE)
 
   ggsave(paste0(out, "/eda_scatter_log.png"),
     ggplot(data, aes(log_budget, log_domgross)) + geom_point() + geom_smooth(method = "lm") +
-    labs(title = "Log(Revenue) vs Log(Budget)", x = "Log(Budget)", y = "Log(Revenue)"))
+    labs(title = "Log(Revenue) vs Log(Budget)", x = "Log(Budget)", y = "Log(Revenue)"),
+    width = 6, height = 4, dpi = 150)
 }
 
 opt <- docopt(doc)
