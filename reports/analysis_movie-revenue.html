@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Audrey Vo, Roxanna Ng, Nikita Prabhu, Philip Chen">
+
+<title>Predicting Movie Revenue From Movie Budget</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="analysis_movie-revenue_files/libs/clipboard/clipboard.min.js"></script>
+<script src="analysis_movie-revenue_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="analysis_movie-revenue_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="analysis_movie-revenue_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="analysis_movie-revenue_files/libs/quarto-html/popper.min.js"></script>
+<script src="analysis_movie-revenue_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="analysis_movie-revenue_files/libs/quarto-html/anchor.min.js"></script>
+<link href="analysis_movie-revenue_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="analysis_movie-revenue_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="analysis_movie-revenue_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="analysis_movie-revenue_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="analysis_movie-revenue_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#research-question" id="toc-research-question" class="nav-link" data-scroll-target="#research-question">Research Question</a></li>
+  <li><a href="#the-data-set" id="toc-the-data-set" class="nav-link" data-scroll-target="#the-data-set">The Data Set</a></li>
+  <li><a href="#cleaning-data" id="toc-cleaning-data" class="nav-link" data-scroll-target="#cleaning-data">Cleaning Data</a></li>
+  </ul></li>
+  <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda">EDA</a></li>
+  <li><a href="#methods-and-results" id="toc-methods-and-results" class="nav-link" data-scroll-target="#methods-and-results">Methods and Results</a>
+  <ul class="collapse">
+  <li><a href="#k-nearest-neighbours-regression-model" id="toc-k-nearest-neighbours-regression-model" class="nav-link" data-scroll-target="#k-nearest-neighbours-regression-model">K-Nearest Neighbours Regression model</a></li>
+  </ul></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a></li>
+  <li><a href="#citations" id="toc-citations" class="nav-link" data-scroll-target="#citations">Citations</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="analysis_movie-revenue.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predicting Movie Revenue From Movie Budget</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Audrey Vo, Roxanna Ng, Nikita Prabhu, Philip Chen </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="summary" class="level1">
+<h1>Summary</h1>
+<p>This study investigates how movie budget predicts domestic box office revenue using the Bechdel Test movie dataset from FiveThirtyEight. Exploratory anaylsis revealed right-skewed distributions for both budget and revenue, which were log-transformed to stabilize variance. A linear regression model and a K-nearest neighbours (KNN) regression model were fitted to predict log-transformed domestic revenue from log-transformed movie budget. Both models showed moderate predictive performance, with a root mean squared prediction error (RMSPE) of roughly 1.27 and 1.28 log units, respectively. The results suggest that while higher budgets are generally associated with higher revenue, budget alone cannot fully explain the variability in box office performance. These findings highlight the complexity of film revenue prediction and the importance of incorporating additional factors beyond production budget.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenu (Baasuroy, Chatterjee, &amp; Ravid, 2003). However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie (De Vany &amp; Walls, 1999).</p>
+<p>Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. In this analysis, we use FiveThirtyEight’s Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer the question: <strong>How does movie budget predict movie revenue?</strong> (FiveThirtyEight, 2014).</p>
+<section id="research-question" class="level2">
+<h2 class="anchored" data-anchor-id="research-question">Research Question</h2>
+<p>How does movie budget predict movie revenue?</p>
+</section>
+<section id="the-data-set" class="level2">
+<h2 class="anchored" data-anchor-id="the-data-set">The Data Set</h2>
+</section>
+<section id="cleaning-data" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning-data">Cleaning Data</h2>
+<p>Since our research question only requires studying 2 variables (movie budget - “budget”, movie revenue - “domgross”), we will filter the data to only observe those 2 columns during our analysis.</p>
+<div id="ed6e894b" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 6 × 2</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">budget</th>
+<th data-quarto-table-cell-role="th" scope="col">domgross</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>13000000</td>
+<td>25682380</td>
+</tr>
+<tr class="even">
+<td>45000000</td>
+<td>13414714</td>
+</tr>
+<tr class="odd">
+<td>20000000</td>
+<td>53107035</td>
+</tr>
+<tr class="even">
+<td>61000000</td>
+<td>75612460</td>
+</tr>
+<tr class="odd">
+<td>40000000</td>
+<td>95020213</td>
+</tr>
+<tr class="even">
+<td>225000000</td>
+<td>38362475</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 1 :</strong> First 6 rows of the data</p>
+<p>Next, we will check our data for any null values and filter them out if there are any.</p>
+<div id="158d7de3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="4">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "# of null values (before filtering): 17"
+[1] "# of null values (after filtering): 0"</code></pre>
+</div>
+</div>
+<p>We will also check for any budget/revenue with a value of 0, since any movie with a $0 budget/revenue is most likely missing data.</p>
+<div id="628e8ab6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="5">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0
+[1] 1</code></pre>
+</div>
+</div>
+<p>After seeing there is one entry with a non-zero budget but $0 revenue, we will first check to see what this value looks like. Since the value has a very high budget, we will say this entry is most likely having its appropriate budget missing and filter it out of the data set.</p>
+<div id="5bf08d5c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 1 × 2</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">budget</th>
+<th data-quarto-table-cell-role="th" scope="col">domgross</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>18000000</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 2 :</strong> Movies with a $0 revenue.</p>
+<div id="ea58fb6a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="7">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0
+[1] 0</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="eda" class="level1">
+<h1>EDA</h1>
+<p>Here, we will look at some general summary statistics of our data:</p>
+<div id="f7acbde8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<pre><code>     budget             domgross        
+ Min.   :     7000   Min.   :      828  
+ 1st Qu.: 12000000   1st Qu.: 16320870  
+ Median : 30000000   Median : 42239614  
+ Mean   : 45174408   Mean   : 69170974  
+ 3rd Qu.: 60000000   3rd Qu.: 93382814  
+ Max.   :425000000   Max.   :760507625  </code></pre>
+</div>
+</div>
+<p>Here, we will look at the general shape/values in our data:</p>
+<div id="eeabda71" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="9">
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [1,776 × 2] (S3: tbl_df/tbl/data.frame)
+ $ budget  : int [1:1776] 13000000 45000000 20000000 61000000 40000000 225000000 92000000 12000000 13000000 130000000 ...
+ $ domgross: num [1:1776] 25682380 13414714 53107035 75612460 95020213 ...</code></pre>
+</div>
+</div>
+<p>Next, we will use different plots to examine the skew/behaviour of budget and revenue in the data.</p>
+<p>In the box plots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.</p>
+<div id="47326840" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="10">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_movie-revenue_files/figure-html/cell-11-output-1.png" width="420" height="420" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Figure 1(left):</strong> Boxplot of movie budget<br>
+<strong>Figure 1(right):</strong> Boxplot of movie revenue</p>
+<p>In the histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.</p>
+<div id="9d02c9cd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="11">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_movie-revenue_files/figure-html/cell-12-output-1.png" width="420" height="420" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Figure 2(left):</strong> Histogram of movie budget<br>
+<strong>Figure 2(left):</strong> Histogram of movie revenue</p>
+<p>Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing the scatter plot, we can see that the data may have a positive linear relationship. The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.</p>
+<div id="4c19dbc3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="12">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_movie-revenue_files/figure-html/cell-13-output-1.png" width="420" height="420" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Figure 3 :</strong> Scatterplot of Domestic Revenue vs Movie Budget</p>
+<p>Since just observing the scatter plot makes it difficult to conclude how linear our data is, we can observe the correlation between movie budget and revenue. We can see that we have a correlation of around 0.627, indicating that there may be a moderate positive relationship between our two variables. This correlation value allows us to further our analysis to see how well movie budget may predict movie revenue.</p>
+<div id="14cfd307" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="13">
+<div class="cell-output cell-output-display">
+0.626884797166084
+</div>
+</div>
+<p>Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in the new scatter plot that applying this function helps make the data less spread out and easier to observe for patterns.</p>
+<div id="404f2031" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="14">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_movie-revenue_files/figure-html/cell-15-output-1.png" width="420" height="420" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Figure 4 :</strong> Scatterplot of log(Domestic Revenue) vs log(Movie Budget</p>
+<p>Here is our data with the log-transformed budget and revenue added:</p>
+<div id="58142bcd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="15">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 6 × 4</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">budget</th>
+<th data-quarto-table-cell-role="th" scope="col">domgross</th>
+<th data-quarto-table-cell-role="th" scope="col">log_budget</th>
+<th data-quarto-table-cell-role="th" scope="col">log_domgross</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>13000000</td>
+<td>25682380</td>
+<td>16.38046</td>
+<td>17.06132</td>
+</tr>
+<tr class="even">
+<td>45000000</td>
+<td>13414714</td>
+<td>17.62217</td>
+<td>16.41186</td>
+</tr>
+<tr class="odd">
+<td>20000000</td>
+<td>53107035</td>
+<td>16.81124</td>
+<td>17.78782</td>
+</tr>
+<tr class="even">
+<td>61000000</td>
+<td>75612460</td>
+<td>17.92638</td>
+<td>18.14113</td>
+</tr>
+<tr class="odd">
+<td>40000000</td>
+<td>95020213</td>
+<td>17.50439</td>
+<td>18.36960</td>
+</tr>
+<tr class="even">
+<td>225000000</td>
+<td>38362475</td>
+<td>19.23161</td>
+<td>17.46259</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 3 :</strong> First six rows with budget, domestic gross, and their log-transformed values</p>
+</section>
+<section id="methods-and-results" class="level1">
+<h1>Methods and Results</h1>
+<p>Due to the relationship between movie budget and movie revenue being relatively linear, we will use a linear regression for analysis. Below, we split the data and summarize the number of observations in each training and test split. We also look at the mean values for the log-transformed budget and revenue columns in each training and test split.</p>
+<div id="794e58f1" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="16">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Training data row count:  1243"
+[1] "Test data row count:  533"</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 1 × 2</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">train_log_budget_mean</th>
+<th data-quarto-table-cell-role="th" scope="col">train_log_domgross_mean</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>16.98953</td>
+<td>17.24123</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 1 × 2</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">test_log_budget_mean</th>
+<th data-quarto-table-cell-role="th" scope="col">test_log_domgross_mean</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>16.9104</td>
+<td>17.16077</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 4 (top):</strong> Mean log-budget and log-domestic revenue for the training set<br>
+<strong>Table 5 (bottom):</strong> Mean log-budget and log-domestic revenue for the test set</p>
+<p>Below we fit a simple linear regression with the log-transformed versions of movie budget and movie revenue to account for data skew. The predictor (log-transformed movie budget) is statistically significant.</p>
+<div id="535e610d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="17">
+<div class="cell-output cell-output-display">
+<pre><code>
+Call:
+lm(formula = log_domgross ~ log_budget, data = train)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.5448 -0.5775  0.1807  0.7754  4.3182 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  4.33845    0.48805   8.889   &lt;2e-16 ***
+log_budget   0.75945    0.02863  26.524   &lt;2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.391 on 1241 degrees of freedom
+Multiple R-squared:  0.3618,    Adjusted R-squared:  0.3613 
+F-statistic: 703.5 on 1 and 1241 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Using the fitted model above, we predict on the test set.</p>
+<div id="32f6f931" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="18">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 6 × 3</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">log_domgross_preds</th>
+<th data-quarto-table-cell-role="th" scope="col">log_budget</th>
+<th data-quarto-table-cell-role="th" scope="col">log_domgross</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>17.72169</td>
+<td>17.62217</td>
+<td>16.41186</td>
+</tr>
+<tr class="even">
+<td>17.27529</td>
+<td>17.03439</td>
+<td>17.43463</td>
+</tr>
+<tr class="odd">
+<td>17.41376</td>
+<td>17.21671</td>
+<td>17.37845</td>
+</tr>
+<tr class="even">
+<td>18.40050</td>
+<td>18.51599</td>
+<td>17.93840</td>
+</tr>
+<tr class="odd">
+<td>16.98240</td>
+<td>16.64872</td>
+<td>17.80893</td>
+</tr>
+<tr class="even">
+<td>16.05300</td>
+<td>15.42495</td>
+<td>18.24139</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 6 :</strong> Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set</p>
+<div id="7e579a02" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="19">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_movie-revenue_files/figure-html/cell-20-output-1.png" width="420" height="420" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Figure 5 :</strong> Scatterplot of log(movie budget) vs log(domestic revenue) for the test set</p>
+<div id="24c3d041" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="20">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 1 × 3</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">.metric</th>
+<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
+<th data-quarto-table-cell-role="th" scope="col">.estimate</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rmse</td>
+<td>standard</td>
+<td>1.266987</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 7 :</strong> RMSPE of the linear regression model</p>
+<div id="1b2fd39e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="21">
+<div class="cell-output cell-output-display">
+3.55013831047426
+</div>
+</div>
+<p>The RMSPE is 1.267. This means on average, the model’s predicted log revenue differs from the actual log revenue by about 1.267. On average, the predicted revenue can be roughly 3.5 times higher or lower than the actual revenue.</p>
+<section id="k-nearest-neighbours-regression-model" class="level2">
+<h2 class="anchored" data-anchor-id="k-nearest-neighbours-regression-model">K-Nearest Neighbours Regression model</h2>
+<p>Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSPE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor.</p>
+<p>Next, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.</p>
+<p>Below we test every 3rd number of neighbours between 1 and 200, set using tibble(), then filtered for the metric root mean standard error (RMSE) to evaluate the fit.</p>
+<div id="b9527242" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="23">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 6 × 7</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">neighbors</th>
+<th data-quarto-table-cell-role="th" scope="col">.metric</th>
+<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
+<th data-quarto-table-cell-role="th" scope="col">mean</th>
+<th data-quarto-table-cell-role="th" scope="col">n</th>
+<th data-quarto-table-cell-role="th" scope="col">std_err</th>
+<th data-quarto-table-cell-role="th" scope="col">.config</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>rmse</td>
+<td>standard</td>
+<td>1.768727</td>
+<td>10</td>
+<td>0.07345088</td>
+<td>pre0_mod01_post0</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>rmse</td>
+<td>standard</td>
+<td>1.506490</td>
+<td>10</td>
+<td>0.07384989</td>
+<td>pre0_mod02_post0</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>rmse</td>
+<td>standard</td>
+<td>1.434970</td>
+<td>10</td>
+<td>0.07054968</td>
+<td>pre0_mod03_post0</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>rmse</td>
+<td>standard</td>
+<td>1.400989</td>
+<td>10</td>
+<td>0.06422357</td>
+<td>pre0_mod04_post0</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td>rmse</td>
+<td>standard</td>
+<td>1.377193</td>
+<td>10</td>
+<td>0.06266466</td>
+<td>pre0_mod05_post0</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>rmse</td>
+<td>standard</td>
+<td>1.377975</td>
+<td>10</td>
+<td>0.06207412</td>
+<td>pre0_mod06_post0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 7 :</strong> Cross-validated RMSE for different K values in KNN regression (first 6 rows).</p>
+<p>Below, we filter the results to get the K value with the lowest associated RMSE.</p>
+<div id="9bdcd4c9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="24">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 1 × 7</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">neighbors</th>
+<th data-quarto-table-cell-role="th" scope="col">.metric</th>
+<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
+<th data-quarto-table-cell-role="th" scope="col">mean</th>
+<th data-quarto-table-cell-role="th" scope="col">n</th>
+<th data-quarto-table-cell-role="th" scope="col">std_err</th>
+<th data-quarto-table-cell-role="th" scope="col">.config</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>88</td>
+<td>rmse</td>
+<td>standard</td>
+<td>1.360276</td>
+<td>10</td>
+<td>0.06144779</td>
+<td>pre0_mod30_post0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 8 :</strong> The minimum RMSE is at K=88.</p>
+<div id="b0e0e94c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="25">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 1 × 6</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">.metric</th>
+<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
+<th data-quarto-table-cell-role="th" scope="col">mean</th>
+<th data-quarto-table-cell-role="th" scope="col">n</th>
+<th data-quarto-table-cell-role="th" scope="col">std_err</th>
+<th data-quarto-table-cell-role="th" scope="col">.config</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rmse</td>
+<td>standard</td>
+<td>1.360276</td>
+<td>10</td>
+<td>0.06144779</td>
+<td>pre0_mod0_post0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 8 :</strong> Cross-validated RMSE for KNN regression model at K = 88.</p>
+<p>For the training set, the average RMSE across the 10 folds is 1.36 log units with a standard error of 0.061.</p>
+<div id="7220c72a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="26">
+<div class="cell-output cell-output-display">
+<table class="dataframe caption-top table table-sm table-striped small">
+<caption>A tibble: 1 × 3</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col">.metric</th>
+<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
+<th data-quarto-table-cell-role="th" scope="col">.estimate</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
+<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rmse</td>
+<td>standard</td>
+<td>1.287064</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Table 9 :</strong> RMSPE of the KNN regression model</p>
+<div id="1ab58896" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="27">
+<div class="cell-output cell-output-display">
+3.62213491779373
+</div>
+</div>
+<p>The test RMSPE of 1.28 means that, on average, the KNN model’s predicted log revenue differs from the actual log revenue by about 1.28. On average, the predicted revenue can be roughly 3.6 times higher or lower than the actual revenue.</p>
+<p>So, both KNN and linear regression have similar predictive accuracy, with linear regression being slightly better.</p>
+<div id="f98526cf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="28">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_movie-revenue_files/figure-html/cell-29-output-1.png" width="420" height="420" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Figure 6 :</strong> Predicted values of log(movie revenue) (blue line) for the final K-NN regression model</p>
+</section>
+</section>
+<section id="discussion" class="level1">
+<h1>Discussion</h1>
+<p>Our analysis suggests that movie budget is moderately associated with domestic box office revenue. The exploratory analysis showed a positive relationship between the two variables, supported by a correlation coefficient of approximately 0.63, indicating a moderate positive association. As the raw data is heavily right-skewed, applying a logarithmic transformation to both variables helped reduce the skewness and produced a more linear relationship suitable for modelling.</p>
+<p>The linear regression model fitted on the log-transformed variables indicated that log-budget is a statistically significant predictor of log-revenue. This suggests that increases in movie budget tend to correspond with increases in domestic box office revenue on average. When evaluated on the test set, the model produced an RMSPE of approximately 1.27 log units, meaning predicted revenue may differ from the true revenue by roughly a factor of 3.5 on average.</p>
+<p>To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = 88, producing a test RMSPE of approximately 1.28, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes (Prag &amp; Casavant, 1994).</p>
+<p>Despite the observed relationship, a couple of limitations exist in this analysis. First, the models only consider budget as a single predictor, when movie revenue is likely influenced by many additional factors such as marketing, release timing, critical reception, and star power. Second, the dataset only includes domestic revenue, where particular films may have performed differently internationally.</p>
+<p>Future work could improve predictive performance by incorporating additional variables such as genre, production studio, critical reception, and by analyzing worldwide revenue rather than only domestic. More advanced modeling techniques such as random forests or gradient boosting models may also capture nonlinear relationships between features and revenue.</p>
+<p>Overall, our findings suggest that movie budget does have a moderate predictive relationship with domestic revenue, but it is not a complete predictor of financial success.</p>
+</section>
+<section id="citations" class="level1">
+<h1>Citations</h1>
+<p>Basuroy, S., Chatterjee, S., &amp; Ravid, S. A. (2003). <em>How critical are critical reviews? The box office effects of film critics, star power, and budgets.</em> Journal of marketing, 67(4), 103-117. https://doi.org/10.1509/jmkg.67.4.103.18692</p>
+<p>De Vany, A., &amp; Walls, W. D. (1999). <em>Uncertainty in the movie industry: Does star power reduce the terror of the box office?</em> Journal of Cultural Economics, 23(4), 285-318.</p>
+<p>FiveThirtyEight. (2014). <em>Bechdel test movie list</em>. Retrieved from https://github.com/fivethirtyeight/data/tree/master/bechdel</p>
+<p>Prag, J., &amp; Casavant, J. (1994). An empirical study of the determinants of revenues and marketing expenditures in the motion picture industry. Journal of Cultural Economics, 18(3), 217–235.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

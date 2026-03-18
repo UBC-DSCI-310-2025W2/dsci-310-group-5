@@ -1,0 +1,407 @@
+---
+title: "Predicting Movie Revenue From Movie Budget"
+author: Audrey Vo, Roxanna Ng, Nikita Prabhu, Philip Chen
+format:
+  html: 
+    toc: true
+    toc-depth: 3
+  pdf:
+    toc: true
+    toc-depth: 3
+execute: 
+  echo: false
+  message: false
+  warning: false
+bibliography: citations.bib
+jupyter: ir
+---
+
+
+# Summary
+
+This study investigates how movie budget predicts domestic box office revenue using the Bechdel Test movie dataset from FiveThirtyEight. Exploratory anaylsis revealed right-skewed distributions for both budget and revenue, which were log-transformed to stabilize variance. A linear regression model and a K-nearest neighbours (KNN) regression model were fitted to predict log-transformed domestic revenue from log-transformed movie budget. Both models showed moderate predictive performance, with a root mean squared prediction error (RMSPE) of roughly 1.27 and 1.28 log units, respectively. The results suggest that while higher budgets are generally associated with higher revenue, budget alone cannot fully explain the variability in box office performance. These findings highlight the complexity of film revenue prediction and the importance of incorporating additional factors beyond production budget.
+
+# Introduction
+
+The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenu (Baasuroy, Chatterjee, & Ravid, 2003). However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie (De Vany & Walls, 1999).
+
+Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. In this analysis, we use FiveThirtyEight's Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer the question: **How does movie budget predict movie revenue?** (FiveThirtyEight, 2014).
+
+## Research Question
+
+How does movie budget predict movie revenue? 
+
+## The Data Set
+
+```{r}
+#| vscode: {languageId: r}
+library(fivethirtyeight)
+library(dplyr)
+library(ggplot2)
+library(tidymodels)
+```
+
+
+```{r}
+# Loading in Data
+#| vscode: {languageId: r}
+data("bechdel", package = "fivethirtyeight")
+```
+
+## Cleaning Data
+
+Since our research question only requires studying 2 variables (movie budget - "budget", movie revenue - "domgross"), we will filter the data to only observe those 2 columns during our analysis. 
+
+```{r}
+#| vscode: {languageId: r}
+movie_data <- bechdel[, c("budget", "domgross")]
+head(movie_data)
+```
+
+**Table 1 :** First 6 rows of the data
+
+Next, we will check our data for any null values and filter them out if there are any. 
+
+```{r}
+#| vscode: {languageId: r}
+print(paste("# of null values (before filtering):", sum(is.na(movie_data))))
+
+movie_data <- movie_data %>%
+  filter(!is.na(budget), !is.na(domgross))
+
+print(paste("# of null values (after filtering):", sum(is.na(movie_data))))
+```
+
+We will also check for any budget/revenue with a value of 0, since any movie with a $0 budget/revenue is most likely missing data.
+
+```{r}
+#| vscode: {languageId: r}
+print(sum(movie_data$budget == 0))
+print(sum(movie_data$domgross == 0))
+```
+
+After seeing there is one entry with a non-zero budget but $0 revenue, we will first check to see what this value looks like. Since the value has a very high budget, we will say this entry is most likely having its appropriate budget missing and filter it out of the data set. 
+
+```{r}
+#| vscode: {languageId: r}
+movie_data[movie_data$domgross == 0, ]
+
+movie_data <- movie_data %>%
+  filter(budget > 0, domgross > 0)
+```
+
+**Table 2 :** Movies with a $0 revenue.
+
+```{r}
+#| vscode: {languageId: r}
+print(sum(movie_data$budget == 0))
+print(sum(movie_data$domgross == 0))
+```
+
+# EDA
+
+Here, we will look at some general summary statistics of our data: 
+
+```{r}
+#| vscode: {languageId: r}
+summary(movie_data)
+```
+
+Here, we will look at the general shape/values in our data:
+
+```{r}
+#| vscode: {languageId: r}
+str(movie_data)
+```
+
+Next, we will use different plots to examine the skew/behaviour of budget and revenue in the data. 
+
+In the box plots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.
+
+```{r}
+#| vscode: {languageId: r}
+par(mfrow = c(1, 2))
+boxplot(movie_data$budget, main = "Boxplot of Movie Budget", ylab = "Budget in USD")
+boxplot(movie_data$domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue in USD")
+par(mfrow = c(1,1))
+```
+
+**Figure 1(left):** Boxplot of movie budget \
+**Figure 1(right):** Boxplot of movie revenue
+
+
+In the histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.
+
+```{r}
+#| vscode: {languageId: r}
+par(mfrow = c(1, 2))
+hist(movie_data$budget, main = "Histogram of Movie Budget", xlab = "Budget in USD")
+hist(movie_data$domgross, main = "Histogram of Movie Revenue", xlab = "Revenue in USD")
+par(mfrow = c(1,1))
+```
+
+**Figure 2(left):** Histogram of movie budget \
+**Figure 2(left):** Histogram of movie revenue
+
+Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing the scatter plot, we can see that the data may have a positive linear relationship.  The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.
+
+```{r}
+#| vscode: {languageId: r}
+budget_rev_plot <- ggplot(movie_data, aes(x = budget, y = domgross)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+budget_rev_plot
+```
+
+**Figure 3 :** Scatterplot of Domestic Revenue vs Movie Budget
+
+Since just observing the scatter plot makes it difficult to conclude how linear our data is, we can observe the correlation between movie budget and revenue. We can see that we have a correlation of around 0.627, indicating that there may be a moderate positive relationship between our two variables. This correlation value allows us to further our analysis to see how well movie budget may predict movie revenue. 
+
+```{r}
+#| vscode: {languageId: r}
+cor(movie_data$budget, movie_data$domgross)
+```
+
+Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in the new scatter plot that applying this function helps make the data less spread out and easier to observe for patterns. 
+
+```{r}
+#| vscode: {languageId: r}
+movie_data <- movie_data %>% 
+  mutate(log_budget = log(budget), log_domgross = log(domgross))
+
+log_budget_rev_plot <- ggplot(movie_data, aes(x = log_budget, y = log_domgross)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+log_budget_rev_plot
+```
+
+**Figure 4 :** Scatterplot of log(Domestic Revenue) vs log(Movie Budget
+
+Here is our data with the log-transformed budget and revenue added:
+
+```{r}
+#| vscode: {languageId: r}
+head(movie_data)
+```
+
+**Table 3 :** First six rows with budget, domestic gross, and their log-transformed values
+
+# Methods and Results
+
+Due to the relationship between movie budget and movie revenue being relatively linear, we will use a linear regression for analysis. Below, we split the data and summarize the number of observations in each training and test split. We also look at the mean values for the log-transformed budget and revenue columns in each training and test split. 
+
+```{r}
+#| vscode: {languageId: r}
+set.seed(120)
+data_split <- initial_split(movie_data, prop = 0.7)
+train <- training(data_split)
+test <- testing(data_split) 
+
+train_n <- train |> summarize(n = n()) |> pull()
+print(paste("Training data row count: ", train_n))
+test_n <- test |> summarize(n = n()) |> pull()
+print(paste("Test data row count: ", test_n))
+
+train_mean <- train |> summarize(train_log_budget_mean = mean(log_budget),
+                                 train_log_domgross_mean = mean(log_domgross))
+train_mean
+test_mean <- test |> summarize(test_log_budget_mean = mean(log_budget),
+                                 test_log_domgross_mean = mean(log_domgross))
+test_mean
+```
+
+**Table 4 (top):** Mean log-budget and log-domestic revenue for the training set \
+**Table 5 (bottom):** Mean log-budget and log-domestic revenue for the test set
+
+Below we fit a simple linear regression with the log-transformed versions of movie budget and movie revenue to account for data skew. The predictor (log-transformed movie budget) is statistically significant. 
+
+```{r}
+#| vscode: {languageId: r}
+lm <- lm(formula = log_domgross ~ log_budget, data = train)
+summary(lm)
+```
+
+Using the fitted model above, we predict on the test set. 
+
+```{r}
+#| vscode: {languageId: r}
+preds <- predict(lm, test) |> bind_cols(test) 
+preds <- preds |> rename(log_domgross_preds = ...1) |> select(log_domgross_preds, log_budget, log_domgross)
+head(preds)
+```
+
+**Table 6 :** Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set
+
+```{r}
+#| vscode: {languageId: r}
+preds_plot <- preds |>
+    ggplot(aes(x = log_budget, y = log_domgross)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE)
+preds_plot
+```
+
+**Figure 5 :** Scatterplot of log(movie budget) vs log(domestic revenue) for the test set
+
+```{r}
+#| vscode: {languageId: r}
+metrics <- metrics(preds, truth = log_domgross, estimate = log_domgross_preds)|>
+filter(.metric=='rmse')
+metrics
+```
+
+**Table 7 :** RMSPE of the linear regression model
+
+```{r}
+#| vscode: {languageId: r}
+exp(metrics$.estimate)
+```
+
+The RMSPE is 1.267. This means on average, the model’s predicted log revenue differs from the actual log revenue by about 1.267. On average, the predicted revenue can be roughly 3.5 times higher or lower than the actual revenue.
+
+## K-Nearest Neighbours Regression model
+
+Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSPE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor. 
+
+Next, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.
+
+```{r}
+#| vscode: {languageId: r}
+knn_recipe <- recipe(log_domgross ~ log_budget, data = train) |>
+  step_scale(all_predictors()) |>
+  step_center(all_predictors())
+
+knn_spec <- nearest_neighbor(weight_func = "rectangular",
+                              neighbors = tune()) |>
+  set_engine("kknn") |>
+  set_mode("regression")
+
+knn_vfold <- vfold_cv(train, v = 10, strata = log_domgross)
+
+knn_wkflw <- workflow() |>
+  add_recipe(knn_recipe) |>
+  add_model(knn_spec)
+```
+
+Below we test every 3rd number of neighbours between 1 and 200, set using tibble(), then filtered for the metric root mean standard error (RMSE) to evaluate the fit. 
+
+```{r}
+#| vscode: {languageId: r}
+set.seed(120)
+gridvals <- tibble(neighbors = seq(from = 1, to = 200, by = 3))
+
+knn_results <- knn_wkflw |>
+  tune_grid(resamples = knn_vfold, grid = gridvals) |>
+  collect_metrics() |>
+  filter(.metric == "rmse")
+
+head(knn_results)
+```
+
+**Table 7 :** Cross-validated RMSE for different K values in KNN regression (first 6 rows).
+
+Below, we filter the results to get the K value with the lowest associated RMSE.
+
+```{r}
+#| vscode: {languageId: r}
+knn_min <- knn_results |>
+  filter(mean == min(mean))
+
+knn_min
+```
+
+**Table 8 :** The minimum RMSE is at K=88.
+
+```{r}
+#| vscode: {languageId: r}
+set.seed(120)
+kmin <- knn_min |> pull(neighbors)
+
+knn_spec_min <- nearest_neighbor(weight_func = "rectangular", neighbors = kmin) |>
+  set_engine("kknn") |>
+  set_mode("regression")
+
+cv_metrics <- workflow() |>
+  add_recipe(knn_recipe) |>
+  add_model(knn_spec_min) |>
+   fit_resamples(resamples = knn_vfold)|>
+   collect_metrics() |>
+   filter(.metric == 'rmse')
+cv_metrics
+```
+
+**Table 8 :** Cross-validated RMSE for KNN regression model at K = 88.
+
+For the training set, the average RMSE across the 10 folds is 1.36 log units with a standard error of 0.061.
+
+```{r}
+#| vscode: {languageId: r}
+knn_fit_min <- workflow() |>
+  add_recipe(knn_recipe) |>
+  add_model(knn_spec_min) |>
+  fit(data = train)
+
+knn_summary <- knn_fit_min |>
+  predict(test) |>
+  bind_cols(test) |>
+  metrics(truth = log_domgross, estimate = .pred) |>
+  filter(.metric == 'rmse')
+
+knn_summary
+```
+
+**Table 9 :** RMSPE of the KNN regression model
+
+```{r}
+#| vscode: {languageId: r}
+exp(knn_summary$.estimate)
+```
+
+The test RMSPE of 1.28 means that, on average, the KNN model’s predicted log revenue differs from the actual log revenue by about 1.28. On average, the predicted revenue can be roughly 3.6 times higher or lower than the actual revenue.
+
+So, both KNN and linear regression have similar predictive accuracy, with linear regression being slightly better.
+
+```{r}
+#| vscode: {languageId: r}
+knn_preds <- knn_fit_min |>
+  predict(test) |>
+  bind_cols(test) |>
+  rename(log_domgross_pred = .pred)
+
+ggplot(knn_preds, aes(x = log_budget, y = log_domgross)) +
+  geom_point(alpha = 0.6) +                                
+  geom_line(aes(y = log_domgross_pred), color = "blue") +
+  labs(
+    title = "KNN Regression: Predicted vs Actual",
+    x = "Log(Movie Budget)",
+    y = "Log(Domestic Revenue)"
+  ) + ggtitle(paste0("K = ", kmin)) +
+  theme_minimal()
+```
+
+**Figure 6 :** Predicted values of log(movie revenue) (blue line) for the final K-NN regression model
+
+
+# Discussion
+
+Our analysis suggests that movie budget is moderately associated with domestic box office revenue. The exploratory analysis showed a positive relationship between the two variables, supported by a correlation coefficient of approximately 0.63, indicating a moderate positive association. As the raw data is heavily right-skewed, applying a logarithmic transformation to both variables helped reduce the skewness and produced a more linear relationship suitable for modelling.
+
+The linear regression model fitted on the log-transformed variables indicated that log-budget is a statistically significant predictor of log-revenue. This suggests that increases in movie budget tend to correspond with increases in domestic box office revenue on average. When evaluated on the test set, the model produced an RMSPE of approximately 1.27 log units, meaning predicted revenue may differ from the true revenue by roughly a factor of 3.5 on average.
+
+To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = 88, producing a test RMSPE of approximately 1.28, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes (Prag & Casavant, 1994).
+
+Despite the observed relationship, a couple of limitations exist in this analysis. First, the models only consider budget as a single predictor, when movie revenue is likely influenced by many additional factors such as marketing, release timing, critical reception, and star power. Second, the dataset only includes domestic revenue, where particular films may have performed differently internationally.
+
+Future work could improve predictive performance by incorporating additional variables such as genre, production studio, critical reception, and by analyzing worldwide revenue rather than only domestic. More advanced modeling techniques such as random forests or gradient boosting models may also capture nonlinear relationships between features and revenue.
+
+Overall, our findings suggest that movie budget does have a moderate predictive relationship with domestic revenue, but it is not a complete predictor of financial success.
+
+# Citations
+
+Basuroy, S., Chatterjee, S., & Ravid, S. A. (2003). *How critical are critical reviews? The box office effects of film critics, star power, and budgets.* Journal of marketing, 67(4), 103-117. https://doi.org/10.1509/jmkg.67.4.103.18692
+
+De Vany, A., & Walls, W. D. (1999). *Uncertainty in the movie industry: Does star power reduce the terror of the box office?* Journal of Cultural Economics, 23(4), 285-318.
+
+FiveThirtyEight. (2014). *Bechdel test movie list*. Retrieved from https://github.com/fivethirtyeight/data/tree/master/bechdel
+
+Prag, J., & Casavant, J. (1994). An empirical study of the determinants of revenues and marketing expenditures in the motion picture industry. Journal of Cultural Economics, 18(3), 217–235.
