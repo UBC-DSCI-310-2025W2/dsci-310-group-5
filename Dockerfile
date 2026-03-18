@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 rocker/r-ver:4.4.2
+ARG TARGETPLATFORM=linux/amd64
+FROM --platform=$TARGETPLATFORM rocker/r-ver:4.4.2
 WORKDIR /project
 
 # System dependencies
@@ -25,7 +26,7 @@ RUN R -e "install.packages(c('renv', 'IRkernel'), repos='https://cloud.r-project
 # Copy project and restore renv
 COPY renv.lock .
 COPY renv/ renv/
-COPY .Rprofile .
+COPY .Rprofile* .
 RUN R -e "renv::restore(prompt=FALSE)"
 
 COPY notebooks/analysis_movie-revenue.ipynb /project/notebooks/
