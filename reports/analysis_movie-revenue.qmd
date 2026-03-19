@@ -14,6 +14,7 @@ execute:
   warning: false
 bibliography: citations.bib
 jupyter: ir
+engine: knitr
 ---
 
 
@@ -54,11 +55,12 @@ Since our research question only requires studying 2 variables (movie budget - "
 
 ```{r}
 #| vscode: {languageId: r}
+#| label: tbl-movie-data-cleaned
+#| tbl-cap: "First 6 rows of the data"
 movie_data <- bechdel[, c("budget", "domgross")]
-head(movie_data)
+knitr::kable(head(movie_data))
 ```
 
-**Table 1 :** First 6 rows of the data
 
 Next, we will check our data for any null values and filter them out if there are any. 
 
@@ -84,13 +86,15 @@ After seeing there is one entry with a non-zero budget but $0 revenue, we will f
 
 ```{r}
 #| vscode: {languageId: r}
-movie_data[movie_data$domgross == 0, ]
+#| label: tbl-movie-data-rev
+#| tbl-cap: "Movies with a $0 revenue"
+#| 
+knitr::kable(movie_data[movie_data$domgross == 0, ])
 
 movie_data <- movie_data %>%
   filter(budget > 0, domgross > 0)
 ```
 
-**Table 2 :** Movies with a $0 revenue.
 
 ```{r}
 #| vscode: {languageId: r}
@@ -118,49 +122,27 @@ Next, we will use different plots to examine the skew/behaviour of budget and re
 
 In the box plots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.
 
-```{r}
-#| vscode: {languageId: r}
-par(mfrow = c(1, 2))
-boxplot(movie_data$budget, main = "Boxplot of Movie Budget", ylab = "Budget in USD")
-boxplot(movie_data$domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue in USD")
-par(mfrow = c(1,1))
-```
 
-**Figure 1(left):** Boxplot of movie budget \
-**Figure 1(right):** Boxplot of movie revenue
-
+![Boxplots of Movie Budget and Revenue](../results/eda_boxplot.png){#fig-eda-boxplots}
 
 In the histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.
 
-```{r}
-#| vscode: {languageId: r}
-par(mfrow = c(1, 2))
-hist(movie_data$budget, main = "Histogram of Movie Budget", xlab = "Budget in USD")
-hist(movie_data$domgross, main = "Histogram of Movie Revenue", xlab = "Revenue in USD")
-par(mfrow = c(1,1))
-```
+![Histograms of Movie Budget and Revenue](../results/eda_histogram.png){#fig-eda-histograms}
 
-**Figure 2(left):** Histogram of movie budget \
-**Figure 2(left):** Histogram of movie revenue
 
 Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing the scatter plot, we can see that the data may have a positive linear relationship.  The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.
 
-```{r}
-#| vscode: {languageId: r}
-budget_rev_plot <- ggplot(movie_data, aes(x = budget, y = domgross)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-budget_rev_plot
-```
 
-**Figure 3 :** Scatterplot of Domestic Revenue vs Movie Budget
+![Scatterplot of Domestic Revenue vs Movie Budget](../results/eda_scatter_raw.png){#fig-eda-scatter-raw width=65% height=400px}
 
-Since just observing the scatter plot makes it difficult to conclude how linear our data is, we can observe the correlation between movie budget and revenue. We can see that we have a correlation of around 0.627, indicating that there may be a moderate positive relationship between our two variables. This correlation value allows us to further our analysis to see how well movie budget may predict movie revenue. 
 
 ```{r}
-#| vscode: {languageId: r}
-cor(movie_data$budget, movie_data$domgross)
+corr_data <- read.csv("../results/eda_correlation.csv")
+corr <- corr_data$correlation[1]
 ```
+
+Since just observing the scatter plot makes it difficult to conclude how linear our data is, we can observe the correlation between movie budget and revenue. We can see that we have a correlation of around `r round(corr, 3)`, indicating that there may be a moderate positive relationship between our two variables. This correlation value allows us to further our analysis to see how well movie budget may predict movie revenue. 
+
 
 Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in the new scatter plot that applying this function helps make the data less spread out and easier to observe for patterns. 
 
@@ -168,100 +150,96 @@ Previously, we observed a very large spread. To account for this, we will apply 
 #| vscode: {languageId: r}
 movie_data <- movie_data %>% 
   mutate(log_budget = log(budget), log_domgross = log(domgross))
-
-log_budget_rev_plot <- ggplot(movie_data, aes(x = log_budget, y = log_domgross)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-log_budget_rev_plot
 ```
 
-**Figure 4 :** Scatterplot of log(Domestic Revenue) vs log(Movie Budget
+
+![Scatterplot of log(Domestic Revenue) vs log(Movie Budget)](../results/eda_scatter_log.png){#fig-eda-scatter-log width=65% height=400px}
 
 Here is our data with the log-transformed budget and revenue added:
 
+
+
 ```{r}
 #| vscode: {languageId: r}
-head(movie_data)
+#| label: tbl-movie-data-log
+#| tbl-cap: "First six rows with budget, domestic gross, and their log-transformed values"
+
+movie_data_log <- read.csv("../results/eda_summary.csv")
+knitr::kable(head(movie_data_log))
 ```
 
-**Table 3 :** First six rows with budget, domestic gross, and their log-transformed values
+
+
 
 # Methods and Results
 
 Due to the relationship between movie budget and movie revenue being relatively linear, we will use a linear regression for analysis. Below, we split the data and summarize the number of observations in each training and test split. We also look at the mean values for the log-transformed budget and revenue columns in each training and test split. 
 
+
 ```{r}
-#| vscode: {languageId: r}
-set.seed(120)
-data_split <- initial_split(movie_data, prop = 0.7)
-train <- training(data_split)
-test <- testing(data_split) 
+#| label: tbl-train-mean
+#| tbl-cap: "Mean log-budget and log-domestic revenue for the training set"
 
-train_n <- train |> summarize(n = n()) |> pull()
-print(paste("Training data row count: ", train_n))
-test_n <- test |> summarize(n = n()) |> pull()
-print(paste("Test data row count: ", test_n))
-
-train_mean <- train |> summarize(train_log_budget_mean = mean(log_budget),
-                                 train_log_domgross_mean = mean(log_domgross))
-train_mean
-test_mean <- test |> summarize(test_log_budget_mean = mean(log_budget),
-                                 test_log_domgross_mean = mean(log_domgross))
-test_mean
+train_mean <- read.csv("../results/linear_regression_train_mean.csv")
+knitr::kable(train_mean)
 ```
 
-**Table 4 (top):** Mean log-budget and log-domestic revenue for the training set \
-**Table 5 (bottom):** Mean log-budget and log-domestic revenue for the test set
+
+```{r}
+#| label: tbl-test-mean
+#| tbl-cap: "Mean log-budget and log-domestic revenue for the test set"
+
+test_mean <- read.csv("../results/linear_regression_test_mean.csv")
+knitr::kable(test_mean)
+```
+
 
 Below we fit a simple linear regression with the log-transformed versions of movie budget and movie revenue to account for data skew. The predictor (log-transformed movie budget) is statistically significant. 
 
 ```{r}
 #| vscode: {languageId: r}
-lm <- lm(formula = log_domgross ~ log_budget, data = train)
-summary(lm)
+
+lm_summary <- readLines("../results/linear_regression_summary.txt")
+cat(lm_summary, sep = "\n")
 ```
 
 Using the fitted model above, we predict on the test set. 
 
 ```{r}
 #| vscode: {languageId: r}
-preds <- predict(lm, test) |> bind_cols(test) 
-preds <- preds |> rename(log_domgross_preds = ...1) |> select(log_domgross_preds, log_budget, log_domgross)
-head(preds)
+#| label: tbl-lm-preds
+#| tbl-cap: "Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set"
+
+preds <- read.csv("../results/linear_regression_preds.csv")
+knitr::kable(head(preds))
 ```
 
-**Table 6 :** Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set
+
+![Scatterplot of log(movie budget) vs log(domestic revenue) for the test set](../results/linear_regression_pred.png){#fig-lm-scatter-pred width=65% height=400px}
+
 
 ```{r}
 #| vscode: {languageId: r}
-preds_plot <- preds |>
-    ggplot(aes(x = log_budget, y = log_domgross)) +
-    geom_point() +
-    geom_smooth(method = "lm", se = FALSE)
-preds_plot
+#| label: tbl-lm-metrics
+#| tbl-cap: "RMSE of the linear regression model"
+
+metrics <- read.csv("../results/linear_regression_metrics.csv")
+knitr::kable(head(metrics))
+
 ```
 
-**Figure 5 :** Scatterplot of log(movie budget) vs log(domestic revenue) for the test set
 
 ```{r}
 #| vscode: {languageId: r}
-metrics <- metrics(preds, truth = log_domgross, estimate = log_domgross_preds)|>
-filter(.metric=='rmse')
-metrics
+estimate <- metrics$.estimate
+estimate_exp <- exp(metrics$.estimate)
 ```
 
-**Table 7 :** RMSPE of the linear regression model
-
-```{r}
-#| vscode: {languageId: r}
-exp(metrics$.estimate)
-```
-
-The RMSPE is 1.267. This means on average, the model’s predicted log revenue differs from the actual log revenue by about 1.267. On average, the predicted revenue can be roughly 3.5 times higher or lower than the actual revenue.
+The RMSE is `r round(estimate, 3)`. This means on average, the model’s predicted log revenue differs from the actual log revenue by about `r round(estimate, 3)`. On average, the predicted revenue can be roughly `r round(estimate_exp, 1)` times higher or lower than the actual revenue.
 
 ## K-Nearest Neighbours Regression model
 
-Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSPE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor. 
+Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor. 
 
 Next, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.
 
@@ -287,6 +265,9 @@ Below we test every 3rd number of neighbours between 1 and 200, set using tibble
 
 ```{r}
 #| vscode: {languageId: r}
+#| label: tbl-knn-cv-rmse
+#| tbl-cap: "Cross-validated RMSE for different K values in KNN regression (first 6 rows)."
+
 set.seed(120)
 gridvals <- tibble(neighbors = seq(from = 1, to = 200, by = 3))
 
@@ -295,10 +276,8 @@ knn_results <- knn_wkflw |>
   collect_metrics() |>
   filter(.metric == "rmse")
 
-head(knn_results)
+knitr::kable(head(head(knn_results)))
 ```
-
-**Table 7 :** Cross-validated RMSE for different K values in KNN regression (first 6 rows).
 
 Below, we filter the results to get the K value with the lowest associated RMSE.
 

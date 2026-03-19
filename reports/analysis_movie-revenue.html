@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="analysis_movie-revenue_files/libs/clipboard/clipboard.min.js"></script>
+<script src="analysis_movie-revenue_files/libs/clipboard/clipboard.min.js"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -36,9 +36,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="analysis_movie-revenue_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="analysis_movie-revenue_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="analysis_movie-revenue_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -113,93 +110,66 @@ ul.task-list li input[type="checkbox"] {
 <section id="cleaning-data" class="level2">
 <h2 class="anchored" data-anchor-id="cleaning-data">Cleaning Data</h2>
 <p>Since our research question only requires studying 2 variables (movie budget - “budget”, movie revenue - “domgross”), we will filter the data to only observe those 2 columns during our analysis.</p>
-<div id="ed6e894b" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="3">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 6 × 2</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">budget</th>
-<th data-quarto-table-cell-role="th" scope="col">domgross</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>13000000</td>
-<td>25682380</td>
-</tr>
-<tr class="even">
-<td>45000000</td>
-<td>13414714</td>
-</tr>
-<tr class="odd">
-<td>20000000</td>
-<td>53107035</td>
-</tr>
-<tr class="even">
-<td>61000000</td>
-<td>75612460</td>
-</tr>
-<tr class="odd">
-<td>40000000</td>
-<td>95020213</td>
-</tr>
-<tr class="even">
-<td>225000000</td>
-<td>38362475</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><strong>Table 1 :</strong> First 6 rows of the data</p>
-<p>Next, we will check our data for any null values and filter them out if there are any.</p>
-<div id="158d7de3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="4">
+<div id="tbl-movie-data-cleaned" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-movie-data-cleaned-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: First 6 rows of the data
+</figcaption>
+<div aria-describedby="tbl-movie-data-cleaned-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "# of null values (before filtering): 17"
-[1] "# of null values (after filtering): 0"</code></pre>
+<pre><code># A tibble: 6 × 2
+     budget domgross
+      &lt;int&gt;    &lt;dbl&gt;
+1  13000000 25682380
+2  45000000 13414714
+3  20000000 53107035
+4  61000000 75612460
+5  40000000 95020213
+6 225000000 38362475</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<p>Next, we will check our data for any null values and filter them out if there are any.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "# of null values (before filtering): 17"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "# of null values (after filtering): 0"</code></pre>
 </div>
 </div>
 <p>We will also check for any budget/revenue with a value of 0, since any movie with a $0 budget/revenue is most likely missing data.</p>
-<div id="628e8ab6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="5">
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0
-[1] 1</code></pre>
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
 </div>
 </div>
 <p>After seeing there is one entry with a non-zero budget but $0 revenue, we will first check to see what this value looks like. Since the value has a very high budget, we will say this entry is most likely having its appropriate budget missing and filter it out of the data set.</p>
-<div id="5bf08d5c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="6">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 1 × 2</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">budget</th>
-<th data-quarto-table-cell-role="th" scope="col">domgross</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>18000000</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><strong>Table 2 :</strong> Movies with a $0 revenue.</p>
-<div id="ea58fb6a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="7">
+<div id="tbl-movie-data-rev" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-movie-data-rev-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Movies with a $0 revenue
+</figcaption>
+<div aria-describedby="tbl-movie-data-rev-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0
-[1] 0</code></pre>
+<pre><code># A tibble: 1 × 2
+    budget domgross
+     &lt;int&gt;    &lt;dbl&gt;
+1 18000000        0</code></pre>
+</div>
+</div>
+</figure>
+</div>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
 </div>
 </div>
 </section>
@@ -207,8 +177,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="eda" class="level1">
 <h1>EDA</h1>
 <p>Here, we will look at some general summary statistics of our data:</p>
-<div id="f7acbde8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="8">
-<div class="cell-output cell-output-display">
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
 <pre><code>     budget             domgross        
  Min.   :     7000   Min.   :      828  
  1st Qu.: 12000000   1st Qu.: 16320870  
@@ -219,7 +189,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <p>Here, we will look at the general shape/values in our data:</p>
-<div id="eeabda71" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="9">
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div class="cell-output cell-output-stdout">
 <pre><code>tibble [1,776 × 2] (S3: tbl_df/tbl/data.frame)
  $ budget  : int [1:1776] 13000000 45000000 20000000 61000000 40000000 225000000 92000000 12000000 13000000 130000000 ...
@@ -228,175 +198,140 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>Next, we will use different plots to examine the skew/behaviour of budget and revenue in the data.</p>
 <p>In the box plots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.</p>
-<div id="47326840" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="10">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/cell-11-output-1.png" width="420" height="420" class="figure-img"></p>
+<div id="fig-eda-boxplots" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda-boxplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/eda_boxplot.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-boxplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Boxplots of Movie Budget and Revenue
+</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<p><strong>Figure 1(left):</strong> Boxplot of movie budget<br>
-<strong>Figure 1(right):</strong> Boxplot of movie revenue</p>
 <p>In the histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.</p>
-<div id="9d02c9cd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="11">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/cell-12-output-1.png" width="420" height="420" class="figure-img"></p>
+<div id="fig-eda-histograms" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda-histograms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/eda_histogram.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-histograms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Histograms of Movie Budget and Revenue
+</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<p><strong>Figure 2(left):</strong> Histogram of movie budget<br>
-<strong>Figure 2(left):</strong> Histogram of movie revenue</p>
 <p>Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing the scatter plot, we can see that the data may have a positive linear relationship. The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.</p>
-<div id="4c19dbc3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="12">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/cell-13-output-1.png" width="420" height="420" class="figure-img"></p>
+<div id="fig-eda-scatter-raw" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda-scatter-raw-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/eda_scatter_raw.png" style="width:65.0%" height="400" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-scatter-raw-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Scatterplot of Domestic Revenue vs Movie Budget
+</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<p><strong>Figure 3 :</strong> Scatterplot of Domestic Revenue vs Movie Budget</p>
 <p>Since just observing the scatter plot makes it difficult to conclude how linear our data is, we can observe the correlation between movie budget and revenue. We can see that we have a correlation of around 0.627, indicating that there may be a moderate positive relationship between our two variables. This correlation value allows us to further our analysis to see how well movie budget may predict movie revenue.</p>
-<div id="14cfd307" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="13">
-<div class="cell-output cell-output-display">
-0.626884797166084
-</div>
-</div>
 <p>Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in the new scatter plot that applying this function helps make the data less spread out and easier to observe for patterns.</p>
-<div id="404f2031" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="14">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/cell-15-output-1.png" width="420" height="420" class="figure-img"></p>
+<div id="fig-eda-scatter-log" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-eda-scatter-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/eda_scatter_log.png" style="width:65.0%" height="400" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-scatter-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Scatterplot of log(Domestic Revenue) vs log(Movie Budget)
+</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<p><strong>Figure 4 :</strong> Scatterplot of log(Domestic Revenue) vs log(Movie Budget</p>
 <p>Here is our data with the log-transformed budget and revenue added:</p>
-<div id="58142bcd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="15">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 6 × 4</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">budget</th>
-<th data-quarto-table-cell-role="th" scope="col">domgross</th>
-<th data-quarto-table-cell-role="th" scope="col">log_budget</th>
-<th data-quarto-table-cell-role="th" scope="col">log_domgross</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>13000000</td>
-<td>25682380</td>
-<td>16.38046</td>
-<td>17.06132</td>
-</tr>
-<tr class="even">
-<td>45000000</td>
-<td>13414714</td>
-<td>17.62217</td>
-<td>16.41186</td>
-</tr>
-<tr class="odd">
-<td>20000000</td>
-<td>53107035</td>
-<td>16.81124</td>
-<td>17.78782</td>
-</tr>
-<tr class="even">
-<td>61000000</td>
-<td>75612460</td>
-<td>17.92638</td>
-<td>18.14113</td>
-</tr>
-<tr class="odd">
-<td>40000000</td>
-<td>95020213</td>
-<td>17.50439</td>
-<td>18.36960</td>
-</tr>
-<tr class="even">
-<td>225000000</td>
-<td>38362475</td>
-<td>19.23161</td>
-<td>17.46259</td>
-</tr>
-</tbody>
-</table>
+<div id="tbl-movie-data-log" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-movie-data-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: First six rows with budget, domestic gross, and their log-transformed values
+</figcaption>
+<div aria-describedby="tbl-movie-data-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+     budget domgross log_budget log_domgross
+      &lt;int&gt;    &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;
+1  13000000 25682380       16.4         17.1
+2  45000000 13414714       17.6         16.4
+3  20000000 53107035       16.8         17.8
+4  61000000 75612460       17.9         18.1
+5  40000000 95020213       17.5         18.4
+6 225000000 38362475       19.2         17.5</code></pre>
 </div>
 </div>
-<p><strong>Table 3 :</strong> First six rows with budget, domestic gross, and their log-transformed values</p>
+</figure>
+</div>
 </section>
 <section id="methods-and-results" class="level1">
 <h1>Methods and Results</h1>
 <p>Due to the relationship between movie budget and movie revenue being relatively linear, we will use a linear regression for analysis. Below, we split the data and summarize the number of observations in each training and test split. We also look at the mean values for the log-transformed budget and revenue columns in each training and test split.</p>
-<div id="794e58f1" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="16">
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Training data row count:  1243"
-[1] "Test data row count:  533"</code></pre>
+<pre><code>[1] "Training data row count:  1243"</code></pre>
 </div>
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 1 × 2</caption>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Test data row count:  533"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-test-means" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-test-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4: Mean log-budget and log-domestic revenue for the training set
+</figcaption>
+<div aria-describedby="tbl-test-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">train_log_budget_mean</th>
-<th data-quarto-table-cell-role="th" scope="col">train_log_domgross_mean</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
+<th style="text-align: right;">train_log_budget_mean</th>
+<th style="text-align: right;">train_log_domgross_mean</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>16.98953</td>
-<td>17.24123</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 1 × 2</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">test_log_budget_mean</th>
-<th data-quarto-table-cell-role="th" scope="col">test_log_domgross_mean</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>16.9104</td>
-<td>17.16077</td>
+<td style="text-align: right;">16.98953</td>
+<td style="text-align: right;">17.24123</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<p><strong>Table 4 (top):</strong> Mean log-budget and log-domestic revenue for the training set<br>
-<strong>Table 5 (bottom):</strong> Mean log-budget and log-domestic revenue for the test set</p>
+</figure>
+</div>
+</div>
+<div class="cell">
+<div id="tbl-train-means" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-train-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5: Mean log-budget and log-domestic revenue for the test set
+</figcaption>
+<div aria-describedby="tbl-train-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">test_log_budget_mean</th>
+<th style="text-align: right;">test_log_domgross_mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">16.9104</td>
+<td style="text-align: right;">17.16077</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
 <p>Below we fit a simple linear regression with the log-transformed versions of movie budget and movie revenue to account for data skew. The predictor (log-transformed movie budget) is statistically significant.</p>
-<div id="535e610d" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="17">
-<div class="cell-output cell-output-display">
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 lm(formula = log_domgross ~ log_budget, data = train)
@@ -410,7 +345,7 @@ Coefficients:
 (Intercept)  4.33845    0.48805   8.889   &lt;2e-16 ***
 log_budget   0.75945    0.02863  26.524   &lt;2e-16 ***
 ---
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Residual standard error: 1.391 on 1241 degrees of freedom
 Multiple R-squared:  0.3618,    Adjusted R-squared:  0.3613 
@@ -418,98 +353,42 @@ F-statistic: 703.5 on 1 and 1241 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Using the fitted model above, we predict on the test set.</p>
-<div id="32f6f931" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="18">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 6 × 3</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">log_domgross_preds</th>
-<th data-quarto-table-cell-role="th" scope="col">log_budget</th>
-<th data-quarto-table-cell-role="th" scope="col">log_domgross</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>17.72169</td>
-<td>17.62217</td>
-<td>16.41186</td>
-</tr>
-<tr class="even">
-<td>17.27529</td>
-<td>17.03439</td>
-<td>17.43463</td>
-</tr>
-<tr class="odd">
-<td>17.41376</td>
-<td>17.21671</td>
-<td>17.37845</td>
-</tr>
-<tr class="even">
-<td>18.40050</td>
-<td>18.51599</td>
-<td>17.93840</td>
-</tr>
-<tr class="odd">
-<td>16.98240</td>
-<td>16.64872</td>
-<td>17.80893</td>
-</tr>
-<tr class="even">
-<td>16.05300</td>
-<td>15.42495</td>
-<td>18.24139</td>
-</tr>
-</tbody>
-</table>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  log_domgross_preds log_budget log_domgross
+               &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;
+1               17.7       17.6         16.4
+2               17.3       17.0         17.4
+3               17.4       17.2         17.4
+4               18.4       18.5         17.9
+5               17.0       16.6         17.8
+6               16.1       15.4         18.2</code></pre>
 </div>
 </div>
 <p><strong>Table 6 :</strong> Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set</p>
-<div id="7e579a02" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="19">
-<div class="cell-output cell-output-display">
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/cell-20-output-1.png" width="420" height="420" class="figure-img"></p>
+<p><img src="analysis_movie-revenue_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><strong>Figure 5 :</strong> Scatterplot of log(movie budget) vs log(domestic revenue) for the test set</p>
-<div id="24c3d041" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="20">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 1 × 3</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">.metric</th>
-<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
-<th data-quarto-table-cell-role="th" scope="col">.estimate</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>rmse</td>
-<td>standard</td>
-<td>1.266987</td>
-</tr>
-</tbody>
-</table>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard        1.27</code></pre>
 </div>
 </div>
 <p><strong>Table 7 :</strong> RMSPE of the linear regression model</p>
-<div id="1b2fd39e" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="21">
-<div class="cell-output cell-output-display">
-3.55013831047426
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.550138</code></pre>
 </div>
 </div>
 <p>The RMSPE is 1.267. This means on average, the model’s predicted log revenue differs from the actual log revenue by about 1.267. On average, the predicted revenue can be roughly 3.5 times higher or lower than the actual revenue.</p>
@@ -518,206 +397,61 @@ F-statistic: 703.5 on 1 and 1241 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSPE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor.</p>
 <p>Next, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.</p>
 <p>Below we test every 3rd number of neighbours between 1 and 200, set using tibble(), then filtered for the metric root mean standard error (RMSE) to evaluate the fit.</p>
-<div id="b9527242" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="23">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 6 × 7</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">neighbors</th>
-<th data-quarto-table-cell-role="th" scope="col">.metric</th>
-<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
-<th data-quarto-table-cell-role="th" scope="col">mean</th>
-<th data-quarto-table-cell-role="th" scope="col">n</th>
-<th data-quarto-table-cell-role="th" scope="col">std_err</th>
-<th data-quarto-table-cell-role="th" scope="col">.config</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>rmse</td>
-<td>standard</td>
-<td>1.768727</td>
-<td>10</td>
-<td>0.07345088</td>
-<td>pre0_mod01_post0</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>rmse</td>
-<td>standard</td>
-<td>1.506490</td>
-<td>10</td>
-<td>0.07384989</td>
-<td>pre0_mod02_post0</td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td>rmse</td>
-<td>standard</td>
-<td>1.434970</td>
-<td>10</td>
-<td>0.07054968</td>
-<td>pre0_mod03_post0</td>
-</tr>
-<tr class="even">
-<td>10</td>
-<td>rmse</td>
-<td>standard</td>
-<td>1.400989</td>
-<td>10</td>
-<td>0.06422357</td>
-<td>pre0_mod04_post0</td>
-</tr>
-<tr class="odd">
-<td>13</td>
-<td>rmse</td>
-<td>standard</td>
-<td>1.377193</td>
-<td>10</td>
-<td>0.06266466</td>
-<td>pre0_mod05_post0</td>
-</tr>
-<tr class="even">
-<td>16</td>
-<td>rmse</td>
-<td>standard</td>
-<td>1.377975</td>
-<td>10</td>
-<td>0.06207412</td>
-<td>pre0_mod06_post0</td>
-</tr>
-</tbody>
-</table>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 7
+  neighbors .metric .estimator  mean     n std_err .config         
+      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;           
+1         1 rmse    standard    1.80    10  0.0558 pre0_mod01_post0
+2         4 rmse    standard    1.49    10  0.0628 pre0_mod02_post0
+3         7 rmse    standard    1.42    10  0.0603 pre0_mod03_post0
+4        10 rmse    standard    1.40    10  0.0564 pre0_mod04_post0
+5        13 rmse    standard    1.39    10  0.0570 pre0_mod05_post0
+6        16 rmse    standard    1.38    10  0.0580 pre0_mod06_post0</code></pre>
 </div>
 </div>
 <p><strong>Table 7 :</strong> Cross-validated RMSE for different K values in KNN regression (first 6 rows).</p>
 <p>Below, we filter the results to get the K value with the lowest associated RMSE.</p>
-<div id="9bdcd4c9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="24">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 1 × 7</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">neighbors</th>
-<th data-quarto-table-cell-role="th" scope="col">.metric</th>
-<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
-<th data-quarto-table-cell-role="th" scope="col">mean</th>
-<th data-quarto-table-cell-role="th" scope="col">n</th>
-<th data-quarto-table-cell-role="th" scope="col">std_err</th>
-<th data-quarto-table-cell-role="th" scope="col">.config</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>88</td>
-<td>rmse</td>
-<td>standard</td>
-<td>1.360276</td>
-<td>10</td>
-<td>0.06144779</td>
-<td>pre0_mod30_post0</td>
-</tr>
-</tbody>
-</table>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 7
+  neighbors .metric .estimator  mean     n std_err .config         
+      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;           
+1        64 rmse    standard    1.36    10  0.0587 pre0_mod22_post0</code></pre>
 </div>
 </div>
 <p><strong>Table 8 :</strong> The minimum RMSE is at K=88.</p>
-<div id="b0e0e94c" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="25">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 1 × 6</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">.metric</th>
-<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
-<th data-quarto-table-cell-role="th" scope="col">mean</th>
-<th data-quarto-table-cell-role="th" scope="col">n</th>
-<th data-quarto-table-cell-role="th" scope="col">std_err</th>
-<th data-quarto-table-cell-role="th" scope="col">.config</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;int&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>rmse</td>
-<td>standard</td>
-<td>1.360276</td>
-<td>10</td>
-<td>0.06144779</td>
-<td>pre0_mod0_post0</td>
-</tr>
-</tbody>
-</table>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  .metric .estimator  mean     n std_err .config        
+  &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;          
+1 rmse    standard    1.36    10  0.0587 pre0_mod0_post0</code></pre>
 </div>
 </div>
 <p><strong>Table 8 :</strong> Cross-validated RMSE for KNN regression model at K = 88.</p>
 <p>For the training set, the average RMSE across the 10 folds is 1.36 log units with a standard error of 0.061.</p>
-<div id="7220c72a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="26">
-<div class="cell-output cell-output-display">
-<table class="dataframe caption-top table table-sm table-striped small">
-<caption>A tibble: 1 × 3</caption>
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" scope="col">.metric</th>
-<th data-quarto-table-cell-role="th" scope="col">.estimator</th>
-<th data-quarto-table-cell-role="th" scope="col">.estimate</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;chr&gt;</th>
-<th data-quarto-table-cell-role="th" scope="col">&lt;dbl&gt;</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>rmse</td>
-<td>standard</td>
-<td>1.287064</td>
-</tr>
-</tbody>
-</table>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 rmse    standard        1.29</code></pre>
 </div>
 </div>
 <p><strong>Table 9 :</strong> RMSPE of the KNN regression model</p>
-<div id="1ab58896" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="27">
-<div class="cell-output cell-output-display">
-3.62213491779373
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.632395</code></pre>
 </div>
 </div>
 <p>The test RMSPE of 1.28 means that, on average, the KNN model’s predicted log revenue differs from the actual log revenue by about 1.28. On average, the predicted revenue can be roughly 3.6 times higher or lower than the actual revenue.</p>
 <p>So, both KNN and linear regression have similar predictive accuracy, with linear regression being slightly better.</p>
-<div id="f98526cf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;vscode&quot;,&quot;value&quot;:{&quot;languageId&quot;:&quot;r&quot;}}" data-execution_count="28">
-<div class="cell-output cell-output-display">
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/cell-29-output-1.png" width="420" height="420" class="figure-img"></p>
+<p><img src="analysis_movie-revenue_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
