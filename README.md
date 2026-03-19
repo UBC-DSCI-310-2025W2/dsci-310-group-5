@@ -15,56 +15,97 @@ This project also aims to emphasize reproducible data science practices by utili
 Click [here](notebooks/analysis_movie-revenue.ipynb) to find the analysis report.
 
 ## Dependencies
-This project uses R (version 4.4.2) and manages package dependencies using renv to ensure reproducibility.
 
-Key packages include:
+This project uses R (version 4.4.2) and manages R package dependencies using `renv` to ensure reproducibility. All package versions are pinned in the `renv.lock` file and will be automatically restored when building the Docker image.
 
-- tidyverse
-- tidymodels
-- dplyr
-- fivethirtyeight
-- ggplot2
-- Jupyter Notebook
+Key R packages include:
 
-All package versions are recorded in the renv.lock file.
+| Package | Version |
+|---|---|
+| tidymodels | 1.4.1 |
+| ggplot2 | 4.0.2 |
+| dplyr | 1.1.4 |
+| tidyr | 1.3.1 |
+| fivethirtyeight | 0.6.2 |
+| IRkernel | 1.3.2 |
+| kknn | 1.4.1 |
 
-More information about renv can be found [here](https://rstudio.github.io/renv/)
+The Python environment provides:
+
+| Package | Version |
+|---|---|
+| jupyterlab | 4.3.4 |
+
+For the full list of dependencies and their pinned versions, see [`renv.lock`](renv.lock).
+
+More information about renv can be found [here](https://rstudio.github.io/renv/).
 
 ## Running the Analysis
-We use a Docker container image for project reproducibility.
 
-To reproduce the analysis, you can run the container either non-interactively or interactively.
+The analysis runs inside a Docker container to ensure a fully reproducible environment. The steps below work on any operating system (Mac, Windows, Linux).
 
-## Running it Non-interactively
-### Pull the Docker image
-```bash
-docker pull audreyvo/dsci-310-group-5:latest
+### Prerequisites
 
-# if using Windows, use
-docker pull --platform linux/arm64 audreyvo/dsci-310-group-5:latest
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) and make sure it is **running** before proceeding.
+2. Clone this repository and navigate into it:
+   ```bash
+   git clone https://github.com/UBC-DSCI-310-2025W2/dsci-310-group-5.git
+   cd dsci-310-group-5
+   ```
+
+### Step 1 — Find the image tag to use
+
+We recommend using a specific SHA-pinned tag rather than `latest` for reproducibility. The `latest` tag is overwritten on every new push and may not match the environment used to produce the results in this repo.
+
+1. Go to the [Docker Hub tags page](https://hub.docker.com/r/nikip901/movie-revenue-test/tags) for this project.
+2. Copy the most recent SHA tag (it will look like a short commit hash, e.g., `a1b2c3d`).
+
+### Step 2 — Set the image tag
+
+Open the `docker-compose.yml` file and set the image to the SHA tag you copied:
+
+```yaml
+services:
+  analysis:
+    image: nikip901/movie-revenue-test:<SHA_TAG>  # e.g. nikip901/movie-revenue-test:a1b2c3d
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/project
 ```
 
-### Run the Docker container
+### Step 3 — Start the container
+
 ```bash
-docker run -p 8888:8888 -v $(pwd):/project audreyvo/dsci-310-group-5:latest
+docker compose up
 ```
 
-You can access and run the Jupyter notebook by clicking the link(s) that docker run outputs.
+Docker will pull the image and start a JupyterLab server. Wait until you see a line in the terminal like:
 
-
-## Running it Interactively
-Navigate to the root of the directory in your terminal and enter:
-
-```bash
-docker-compose up
+```
+http://127.0.0.1:8888/lab
 ```
 
-You can access and run the Jupyter notebook by clicking the link(s) outputted.
+### Step 4 — Open JupyterLab
 
-When finished, enter the following command to remove the container.
+Open your browser and navigate to:
+
+```
+http://localhost:8888/lab
+```
+
+> **Port conflict:** If port `8888` is already in use, change the left side of `"8888:8888"` in `docker-compose.yml` to any free port (e.g., `"8890:8888"`) and navigate to `http://localhost:8890/lab` instead.
+
+### Step 5 — Run the analysis
+
+In JupyterLab, open `notebooks/analysis_movie-revenue.ipynb` and select **Kernel → Restart Kernel and Run All Cells**.
+
+### Step 6 — Stop the container
+
+When finished, stop the container by pressing `Ctrl + C` in the terminal, then run:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## License Information
