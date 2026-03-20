@@ -30,12 +30,6 @@ Key R packages include:
 | IRkernel | 1.3.2 |
 | kknn | 1.4.1 |
 
-The Python environment provides:
-
-| Package | Version |
-|---|---|
-| jupyterlab | 4.3.4 |
-
 For the full list of dependencies and their pinned versions, see [`renv.lock`](renv.lock).
 
 More information about renv can be found [here](https://rstudio.github.io/renv/).
@@ -53,40 +47,19 @@ The analysis runs inside a Docker container to ensure a fully reproducible envir
    cd dsci-310-group-5
    ```
 
-### Step 1 — Find the image tag to use
-
-We recommend using a specific SHA-pinned tag rather than `latest` for reproducibility. The `latest` tag is overwritten on every new push and may not match the environment used to produce the results in this repo.
-
-1. Go to the [Docker Hub tags page](https://hub.docker.com/r/nikip901/movie-revenue-test/tags) for this project.
-2. Copy the most recent SHA tag (it will look like a short commit hash, e.g., `a1b2c3d`).
-
-### Step 2 — Set the image tag
-
-Open the `docker-compose.yml` file and set the image to the SHA tag you copied:
-
-```yaml
-services:
-  analysis:
-    image: nikip901/movie-revenue-test:<SHA_TAG>  # e.g. nikip901/movie-revenue-test:a1b2c3d
-    ports:
-      - "8888:8888"
-    volumes:
-      - .:/project
-```
-
-### Step 3 — Start the container
+### Step 1 — Start the container
 
 ```bash
 docker compose up
 ```
 
-Docker will pull the image and start a JupyterLab server. Wait until you see a line in the terminal like:
+Docker will pull the pinned image (`nikip901/movie-revenue-test:c1461a1`) and start a JupyterLab server. Wait until you see a line in the terminal like:
 
 ```
 http://127.0.0.1:8888/lab
 ```
 
-### Step 4 — Open JupyterLab
+### Step 2 — Open JupyterLab
 
 Open your browser and navigate to:
 
@@ -96,11 +69,11 @@ http://localhost:8888/lab
 
 > **Port conflict:** If port `8888` is already in use, change the left side of `"8888:8888"` in `docker-compose.yml` to any free port (e.g., `"8890:8888"`) and navigate to `http://localhost:8890/lab` instead.
 
-### Step 5 — Run the analysis
+### Step 3 — Run the analysis
 
 In JupyterLab, open `notebooks/analysis_movie-revenue.ipynb` and select **Kernel → Restart Kernel and Run All Cells**.
 
-### Step 6 — Stop the container
+### Step 4 — Stop the container
 
 When finished, stop the container by pressing `Ctrl + C` in the terminal, then run:
 
