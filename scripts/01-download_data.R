@@ -1,5 +1,5 @@
 "Usage:
-  01-download_data.R --input=<url> [--output=<path>]
+  01-download_data.R --input=<url> --output=<path>
 
 Options:
   --input=<url>   URL to download data from
