@@ -21,7 +21,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="analysis_movie-revenue_files/libs/clipboard/clipboard.min.js"></script>
@@ -98,8 +118,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenu (Baasuroy, Chatterjee, &amp; Ravid, 2003). However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie (De Vany &amp; Walls, 1999).</p>
-<p>Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. In this analysis, we use FiveThirtyEight’s Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer the question: <strong>How does movie budget predict movie revenue?</strong> (FiveThirtyEight, 2014).</p>
+<p>The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenue <span class="citation" data-cites="basuroy2003critical">(<a href="#ref-basuroy2003critical" role="doc-biblioref">Basuroy, Chatterjee, and Ravid 2003</a>)</span>. However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie <span class="citation" data-cites="devany1999uncertainty">(<a href="#ref-devany1999uncertainty" role="doc-biblioref">De Vany and Walls 1999</a>)</span>.</p>
+<p>Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. In this analysis, we use FiveThirtyEight’s Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer the question: <strong>How does movie budget predict movie revenue?</strong> <span class="citation" data-cites="fivethirtyeight2014bechdel">(<a href="#ref-fivethirtyeight2014bechdel" role="doc-biblioref">FiveThirtyEight 2014</a>)</span>.</p>
 <section id="research-question" class="level2">
 <h2 class="anchored" data-anchor-id="research-question">Research Question</h2>
 <p>How does movie budget predict movie revenue?</p>
@@ -110,25 +130,52 @@ ul.task-list li input[type="checkbox"] {
 <section id="cleaning-data" class="level2">
 <h2 class="anchored" data-anchor-id="cleaning-data">Cleaning Data</h2>
 <p>Since our research question only requires studying 2 variables (movie budget - “budget”, movie revenue - “domgross”), we will filter the data to only observe those 2 columns during our analysis.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div id="tbl-movie-data-cleaned" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-movie-data-cleaned-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: First 6 rows of the data
 </figcaption>
 <div aria-describedby="tbl-movie-data-cleaned-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 2
-     budget domgross
-      &lt;int&gt;    &lt;dbl&gt;
-1  13000000 25682380
-2  45000000 13414714
-3  20000000 53107035
-4  61000000 75612460
-5  40000000 95020213
-6 225000000 38362475</code></pre>
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">budget</th>
+<th style="text-align: right;">domgross</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1.30e+07</td>
+<td style="text-align: right;">25682380</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.50e+07</td>
+<td style="text-align: right;">13414714</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00e+07</td>
+<td style="text-align: right;">53107035</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6.10e+07</td>
+<td style="text-align: right;">75612460</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.00e+07</td>
+<td style="text-align: right;">95020213</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.25e+08</td>
+<td style="text-align: right;">38362475</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </figure>
+</div>
 </div>
 <p>Next, we will check our data for any null values and filter them out if there are any.</p>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
@@ -142,34 +189,38 @@ Table&nbsp;1: First 6 rows of the data
 <p>We will also check for any budget/revenue with a value of 0, since any movie with a $0 budget/revenue is most likely missing data.</p>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
+<pre><code>[1] "Movies with $0 budget after filtering: 0"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
+<pre><code>[1] "Movies with $0 budget after filtering: 1"</code></pre>
 </div>
 </div>
 <p>After seeing there is one entry with a non-zero budget but $0 revenue, we will first check to see what this value looks like. Since the value has a very high budget, we will say this entry is most likely having its appropriate budget missing and filter it out of the data set.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div id="tbl-movie-data-rev" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-movie-data-rev-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;2: Movies with a $0 revenue
 </figcaption>
 <div aria-describedby="tbl-movie-data-rev-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 2
-    budget domgross
-     &lt;int&gt;    &lt;dbl&gt;
-1 18000000        0</code></pre>
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">budget</th>
+<th style="text-align: right;">domgross</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1.8e+07</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </figure>
-</div>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
 </div>
 </div>
 </section>
@@ -179,109 +230,144 @@ Table&nbsp;2: Movies with a $0 revenue
 <p>Here, we will look at some general summary statistics of our data:</p>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div class="cell-output cell-output-stdout">
-<pre><code>     budget             domgross        
- Min.   :     7000   Min.   :      828  
- 1st Qu.: 12000000   1st Qu.: 16320870  
- Median : 30000000   Median : 42239614  
- Mean   : 45174408   Mean   : 69170974  
- 3rd Qu.: 60000000   3rd Qu.: 93382814  
- Max.   :425000000   Max.   :760507625  </code></pre>
+<pre><code>     budget             domgross           log_budget      log_domgross   
+ Min.   :     7000   Min.   :      828   Min.   : 8.854   Min.   : 6.719  
+ 1st Qu.: 12000000   1st Qu.: 16320870   1st Qu.:16.300   1st Qu.:16.608  
+ Median : 30000000   Median : 42239614   Median :17.217   Median :17.559  
+ Mean   : 45174408   Mean   : 69170974   Mean   :16.966   Mean   :17.217  
+ 3rd Qu.: 60000000   3rd Qu.: 93382814   3rd Qu.:17.910   3rd Qu.:18.352  
+ Max.   :425000000   Max.   :760507625   Max.   :19.868   Max.   :20.449  </code></pre>
 </div>
 </div>
 <p>Here, we will look at the general shape/values in our data:</p>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div class="cell-output cell-output-stdout">
-<pre><code>tibble [1,776 × 2] (S3: tbl_df/tbl/data.frame)
- $ budget  : int [1:1776] 13000000 45000000 20000000 61000000 40000000 225000000 92000000 12000000 13000000 130000000 ...
- $ domgross: num [1:1776] 25682380 13414714 53107035 75612460 95020213 ...</code></pre>
+<pre><code>'data.frame':   1776 obs. of  4 variables:
+ $ budget      : num  1.30e+07 4.50e+07 2.00e+07 6.10e+07 4.00e+07 2.25e+08 9.20e+07 1.20e+07 1.30e+07 1.30e+08 ...
+ $ domgross    : num  25682380 13414714 53107035 75612460 95020213 ...
+ $ log_budget  : num  16.4 17.6 16.8 17.9 17.5 ...
+ $ log_domgross: num  17.1 16.4 17.8 18.1 18.4 ...</code></pre>
 </div>
 </div>
 <p>Next, we will use different plots to examine the skew/behaviour of budget and revenue in the data.</p>
-<p>In the box plots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.</p>
+<p>In <a href="#fig-eda-boxplots" class="quarto-xref">Figure&nbsp;1</a>, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.</p>
 <div id="fig-eda-boxplots" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda-boxplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../results/eda_boxplot.png" class="img-fluid figure-img">
+<img src="../results/figure1-eda_boxplot.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-boxplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Boxplots of Movie Budget and Revenue
 </figcaption>
 </figure>
 </div>
-<p>In the histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.</p>
+<p>In <a href="#fig-eda-histograms" class="quarto-xref">Figure&nbsp;2</a>, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.</p>
 <div id="fig-eda-histograms" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-eda-histograms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../results/eda_histogram.png" class="img-fluid figure-img">
+<img src="../results/figure2-eda_histogram.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-histograms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Histograms of Movie Budget and Revenue
 </figcaption>
 </figure>
 </div>
-<p>Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing the scatter plot, we can see that the data may have a positive linear relationship. The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.</p>
-<div id="fig-eda-scatter-raw" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p>Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing <a href="#fig-eda-rev-vs-bud" class="quarto-xref">Figure&nbsp;3</a>, we can see that the data may have a positive linear relationship. The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.</p>
+<div id="fig-eda-rev-vs-bud" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-eda-scatter-raw-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../results/eda_scatter_raw.png" style="width:65.0%" height="400" class="figure-img">
+<div aria-describedby="fig-eda-rev-vs-bud-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/figure3-eda_revenue_vs_budget.png" style="width:65.0%" height="400" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-scatter-raw-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-rev-vs-bud-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Scatterplot of Domestic Revenue vs Movie Budget
 </figcaption>
 </figure>
 </div>
 <p>Since just observing the scatter plot makes it difficult to conclude how linear our data is, we can observe the correlation between movie budget and revenue. We can see that we have a correlation of around 0.627, indicating that there may be a moderate positive relationship between our two variables. This correlation value allows us to further our analysis to see how well movie budget may predict movie revenue.</p>
-<p>Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in the new scatter plot that applying this function helps make the data less spread out and easier to observe for patterns.</p>
-<div id="fig-eda-scatter-log" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p>Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in <a href="#fig-eda-log-scatter" class="quarto-xref">Figure&nbsp;4</a> that applying this function helps make the data less spread out and easier to observe for patterns.</p>
+<div id="fig-eda-log-scatter" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-eda-scatter-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../results/eda_scatter_log.png" style="width:65.0%" height="400" class="figure-img">
+<div aria-describedby="fig-eda-log-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/figure4-eda_log_revenue_vs_log_budget.png" style="width:65.0%" height="400" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-scatter-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-eda-log-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Scatterplot of log(Domestic Revenue) vs log(Movie Budget)
 </figcaption>
 </figure>
 </div>
 <p>Here is our data with the log-transformed budget and revenue added:</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <div id="tbl-movie-data-log" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-movie-data-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;3: First six rows with budget, domestic gross, and their log-transformed values
 </figcaption>
 <div aria-describedby="tbl-movie-data-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 4
-     budget domgross log_budget log_domgross
-      &lt;int&gt;    &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;
-1  13000000 25682380       16.4         17.1
-2  45000000 13414714       17.6         16.4
-3  20000000 53107035       16.8         17.8
-4  61000000 75612460       17.9         18.1
-5  40000000 95020213       17.5         18.4
-6 225000000 38362475       19.2         17.5</code></pre>
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">budget</th>
+<th style="text-align: right;">domgross</th>
+<th style="text-align: right;">log_budget</th>
+<th style="text-align: right;">log_domgross</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1.30e+07</td>
+<td style="text-align: right;">25682380</td>
+<td style="text-align: right;">16.38046</td>
+<td style="text-align: right;">17.06132</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4.50e+07</td>
+<td style="text-align: right;">13414714</td>
+<td style="text-align: right;">17.62217</td>
+<td style="text-align: right;">16.41186</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.00e+07</td>
+<td style="text-align: right;">53107035</td>
+<td style="text-align: right;">16.81124</td>
+<td style="text-align: right;">17.78782</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6.10e+07</td>
+<td style="text-align: right;">75612460</td>
+<td style="text-align: right;">17.92638</td>
+<td style="text-align: right;">18.14113</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">4.00e+07</td>
+<td style="text-align: right;">95020213</td>
+<td style="text-align: right;">17.50439</td>
+<td style="text-align: right;">18.36960</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.25e+08</td>
+<td style="text-align: right;">38362475</td>
+<td style="text-align: right;">19.23161</td>
+<td style="text-align: right;">17.46259</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </figure>
+</div>
 </div>
 </section>
 <section id="methods-and-results" class="level1">
 <h1>Methods and Results</h1>
 <p>Due to the relationship between movie budget and movie revenue being relatively linear, we will use a linear regression for analysis. Below, we split the data and summarize the number of observations in each training and test split. We also look at the mean values for the log-transformed budget and revenue columns in each training and test split.</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Training data row count:  1243"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Test data row count:  533"</code></pre>
-</div>
-</div>
 <div class="cell">
-<div id="tbl-test-means" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-train-mean" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-test-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-train-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;4: Mean log-budget and log-domestic revenue for the training set
 </figcaption>
-<div aria-describedby="tbl-test-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-train-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
@@ -303,12 +389,12 @@ Table&nbsp;4: Mean log-budget and log-domestic revenue for the training set
 </div>
 </div>
 <div class="cell">
-<div id="tbl-train-means" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<div id="tbl-test-mean" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-train-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-test-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;5: Mean log-budget and log-domestic revenue for the test set
 </figcaption>
-<div aria-describedby="tbl-train-means-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-test-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
@@ -345,7 +431,7 @@ Coefficients:
 (Intercept)  4.33845    0.48805   8.889   &lt;2e-16 ***
 log_budget   0.75945    0.02863  26.524   &lt;2e-16 ***
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Residual standard error: 1.391 on 1241 degrees of freedom
 Multiple R-squared:  0.3618,    Adjusted R-squared:  0.3613 
@@ -354,129 +440,349 @@ F-statistic: 703.5 on 1 and 1241 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <p>Using the fitted model above, we predict on the test set.</p>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 3
-  log_domgross_preds log_budget log_domgross
-               &lt;dbl&gt;      &lt;dbl&gt;        &lt;dbl&gt;
-1               17.7       17.6         16.4
-2               17.3       17.0         17.4
-3               17.4       17.2         17.4
-4               18.4       18.5         17.9
-5               17.0       16.6         17.8
-6               16.1       15.4         18.2</code></pre>
-</div>
-</div>
-<p><strong>Table 6 :</strong> Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div id="tbl-lm-preds" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lm-preds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;6: Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set
+</figcaption>
+<div aria-describedby="tbl-lm-preds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">log_domgross_preds</th>
+<th style="text-align: right;">log_budget</th>
+<th style="text-align: right;">log_domgross</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">17.72169</td>
+<td style="text-align: right;">17.62217</td>
+<td style="text-align: right;">16.41186</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">17.27529</td>
+<td style="text-align: right;">17.03439</td>
+<td style="text-align: right;">17.43463</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17.41376</td>
+<td style="text-align: right;">17.21671</td>
+<td style="text-align: right;">17.37845</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">18.40050</td>
+<td style="text-align: right;">18.51599</td>
+<td style="text-align: right;">17.93840</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">16.98240</td>
+<td style="text-align: right;">16.64872</td>
+<td style="text-align: right;">17.80893</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16.05300</td>
+<td style="text-align: right;">15.42495</td>
+<td style="text-align: right;">18.24139</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </figure>
 </div>
 </div>
+<div id="fig-lm-scatter-pred" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lm-scatter-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/figure5_linear_regression_pred.png" style="width:65.0%" height="400" class="figure-img">
 </div>
-<p><strong>Figure 5 :</strong> Scatterplot of log(movie budget) vs log(domestic revenue) for the test set</p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lm-scatter-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Scatterplot of log(movie budget) vs log(domestic revenue) for the test set
+</figcaption>
+</figure>
+</div>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 3
-  .metric .estimator .estimate
-  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-1 rmse    standard        1.27</code></pre>
+<div id="tbl-lm-metrics" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-lm-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7: RMSE of the linear regression model
+</figcaption>
+<div aria-describedby="tbl-lm-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">.metric</th>
+<th style="text-align: left;">.estimator</th>
+<th style="text-align: right;">.estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.266987</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<p><strong>Table 7 :</strong> RMSPE of the linear regression model</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 3.550138</code></pre>
+</figure>
 </div>
 </div>
-<p>The RMSPE is 1.267. This means on average, the model’s predicted log revenue differs from the actual log revenue by about 1.267. On average, the predicted revenue can be roughly 3.5 times higher or lower than the actual revenue.</p>
+<p>The RMSE is 1.267. This means on average, the model’s predicted log revenue differs from the actual log revenue by about 1.267. On average, the predicted revenue can be roughly 3.6 times higher or lower than the actual revenue.</p>
 <section id="k-nearest-neighbours-regression-model" class="level2">
 <h2 class="anchored" data-anchor-id="k-nearest-neighbours-regression-model">K-Nearest Neighbours Regression model</h2>
-<p>Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSPE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor.</p>
-<p>Next, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.</p>
-<p>Below we test every 3rd number of neighbours between 1 and 200, set using tibble(), then filtered for the metric root mean standard error (RMSE) to evaluate the fit.</p>
+<p>Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor.</p>
+<p>Then, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.</p>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 7
-  neighbors .metric .estimator  mean     n std_err .config         
-      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;           
-1         1 rmse    standard    1.80    10  0.0558 pre0_mod01_post0
-2         4 rmse    standard    1.49    10  0.0628 pre0_mod02_post0
-3         7 rmse    standard    1.42    10  0.0603 pre0_mod03_post0
-4        10 rmse    standard    1.40    10  0.0564 pre0_mod04_post0
-5        13 rmse    standard    1.39    10  0.0570 pre0_mod05_post0
-6        16 rmse    standard    1.38    10  0.0580 pre0_mod06_post0</code></pre>
-</div>
-</div>
-<p><strong>Table 7 :</strong> Cross-validated RMSE for different K values in KNN regression (first 6 rows).</p>
-<p>Below, we filter the results to get the K value with the lowest associated RMSE.</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 7
-  neighbors .metric .estimator  mean     n std_err .config         
-      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;           
-1        64 rmse    standard    1.36    10  0.0587 pre0_mod22_post0</code></pre>
-</div>
-</div>
-<p><strong>Table 8 :</strong> The minimum RMSE is at K=88.</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 6
-  .metric .estimator  mean     n std_err .config        
-  &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;          
-1 rmse    standard    1.36    10  0.0587 pre0_mod0_post0</code></pre>
-</div>
-</div>
-<p><strong>Table 8 :</strong> Cross-validated RMSE for KNN regression model at K = 88.</p>
-<p>For the training set, the average RMSE across the 10 folds is 1.36 log units with a standard error of 0.061.</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 3
-  .metric .estimator .estimate
-  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-1 rmse    standard        1.29</code></pre>
-</div>
-</div>
-<p><strong>Table 9 :</strong> RMSPE of the KNN regression model</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 3.632395</code></pre>
-</div>
-</div>
-<p>The test RMSPE of 1.28 means that, on average, the KNN model’s predicted log revenue differs from the actual log revenue by about 1.28. On average, the predicted revenue can be roughly 3.6 times higher or lower than the actual revenue.</p>
-<p>So, both KNN and linear regression have similar predictive accuracy, with linear regression being slightly better.</p>
-<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div id="tbl-knn-cv-rmse" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-knn-cv-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;8: Cross-validated RMSE for different K values in KNN regression (first 6 rows).
+</figcaption>
+<div aria-describedby="tbl-knn-cv-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="analysis_movie-revenue_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 13%">
+<col style="width: 4%">
+<col style="width: 14%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">neighbors</th>
+<th style="text-align: left;">.metric</th>
+<th style="text-align: left;">.estimator</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">std_err</th>
+<th style="text-align: left;">.config</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.817317</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0580394</td>
+<td style="text-align: left;">pre0_mod01_post0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.503617</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0372931</td>
+<td style="text-align: left;">pre0_mod02_post0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.428656</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0401403</td>
+<td style="text-align: left;">pre0_mod03_post0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.401482</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0367760</td>
+<td style="text-align: left;">pre0_mod04_post0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.394198</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0385237</td>
+<td style="text-align: left;">pre0_mod05_post0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.392853</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.0426488</td>
+<td style="text-align: left;">pre0_mod06_post0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </figure>
 </div>
 </div>
+<p>In <a href="#tbl-knn-cv-rmse" class="quarto-xref">Table&nbsp;8</a>, we test every 3rd number of neighbours between 1 and 200, set using tibble(), then filtered for the metric root mean standard error (RMSE) to evaluate the fit.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div id="tbl-knn-min" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-knn-min-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;9: The minimum RMSE is at K=88.
+</figcaption>
+<div aria-describedby="tbl-knn-min-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 13%">
+<col style="width: 4%">
+<col style="width: 13%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">neighbors</th>
+<th style="text-align: left;">.metric</th>
+<th style="text-align: left;">.estimator</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">std_err</th>
+<th style="text-align: left;">.config</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">82</td>
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.373011</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.045843</td>
+<td style="text-align: left;">pre0_mod28_post0</td>
+</tr>
+</tbody>
+</table>
 </div>
-<p><strong>Figure 6 :</strong> Predicted values of log(movie revenue) (blue line) for the final K-NN regression model</p>
+</div>
+</figure>
+</div>
+</div>
+<p>In <a href="#tbl-knn-min" class="quarto-xref">Table&nbsp;9</a>, we filter the results to get the K value with the lowest associated RMSE.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div id="tbl-knn-cv-metrics" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-knn-cv-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;10: Cross-validated RMSE for KNN regression model at K = 88.
+</figcaption>
+<div aria-describedby="tbl-knn-cv-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">.metric</th>
+<th style="text-align: left;">.estimator</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">std_err</th>
+<th style="text-align: left;">.config</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.373011</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.045843</td>
+<td style="text-align: left;">pre0_mod0_post0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>In <a href="#tbl-knn-cv-metrics" class="quarto-xref">Table&nbsp;10</a>, we find the cross-validated RMSE for the model at 82. For the training set, the average RMSE across the 10 folds is 1.37 log units with a standard error of 0.05.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<div id="tbl-knn-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-vscode="{&quot;languageId&quot;:&quot;r&quot;}">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-knn-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;11: RMSE of the KNN regression model
+</figcaption>
+<div aria-describedby="tbl-knn-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">.metric</th>
+<th style="text-align: left;">.estimator</th>
+<th style="text-align: right;">.estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">rmse</td>
+<td style="text-align: left;">standard</td>
+<td style="text-align: right;">1.287971</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>From <a href="#tbl-knn-summary" class="quarto-xref">Table&nbsp;11</a>, the test RMSPE of 1.29 means that, on average, the KNN model’s predicted log revenue differs from the actual log revenue by about 1.29. On average, the predicted revenue can be roughly 3.63 times higher or lower than the actual revenue.</p>
+<p>So, both KNN and linear regression have similar predictive accuracy, with linear regression being slightly better.</p>
+<div id="fig-lm-scatter-pred" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lm-scatter-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../results/figure6_knn_pred.png" style="width:65.0%" height="400" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lm-scatter-pred-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Predicted values of log(movie revenue) (blue line) for the final K-NN regression model
+</figcaption>
+</figure>
+</div>
 </section>
 </section>
 <section id="discussion" class="level1">
 <h1>Discussion</h1>
 <p>Our analysis suggests that movie budget is moderately associated with domestic box office revenue. The exploratory analysis showed a positive relationship between the two variables, supported by a correlation coefficient of approximately 0.63, indicating a moderate positive association. As the raw data is heavily right-skewed, applying a logarithmic transformation to both variables helped reduce the skewness and produced a more linear relationship suitable for modelling.</p>
-<p>The linear regression model fitted on the log-transformed variables indicated that log-budget is a statistically significant predictor of log-revenue. This suggests that increases in movie budget tend to correspond with increases in domestic box office revenue on average. When evaluated on the test set, the model produced an RMSPE of approximately 1.27 log units, meaning predicted revenue may differ from the true revenue by roughly a factor of 3.5 on average.</p>
-<p>To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = 88, producing a test RMSPE of approximately 1.28, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes (Prag &amp; Casavant, 1994).</p>
+<p>The linear regression model fitted on the log-transformed variables indicated that log-budget is a statistically significant predictor of log-revenue. This suggests that increases in movie budget tend to correspond with increases in domestic box office revenue on average. When evaluated on the test set, the model produced an RMSPE of approximately 1.27 log units, meaning predicted revenue may differ from the true revenue by roughly a factor of 3.55 on average.</p>
+<p>To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = 82, producing a test RMSPE of approximately 1.37, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes <span class="citation" data-cites="prag1994empirical">(<a href="#ref-prag1994empirical" role="doc-biblioref">Prag and Casavant 1994</a>)</span>.</p>
 <p>Despite the observed relationship, a couple of limitations exist in this analysis. First, the models only consider budget as a single predictor, when movie revenue is likely influenced by many additional factors such as marketing, release timing, critical reception, and star power. Second, the dataset only includes domestic revenue, where particular films may have performed differently internationally.</p>
 <p>Future work could improve predictive performance by incorporating additional variables such as genre, production studio, critical reception, and by analyzing worldwide revenue rather than only domestic. More advanced modeling techniques such as random forests or gradient boosting models may also capture nonlinear relationships between features and revenue.</p>
 <p>Overall, our findings suggest that movie budget does have a moderate predictive relationship with domestic revenue, but it is not a complete predictor of financial success.</p>
 </section>
-<section id="citations" class="level1">
-<h1>Citations</h1>
-<p>Basuroy, S., Chatterjee, S., &amp; Ravid, S. A. (2003). <em>How critical are critical reviews? The box office effects of film critics, star power, and budgets.</em> Journal of marketing, 67(4), 103-117. https://doi.org/10.1509/jmkg.67.4.103.18692</p>
-<p>De Vany, A., &amp; Walls, W. D. (1999). <em>Uncertainty in the movie industry: Does star power reduce the terror of the box office?</em> Journal of Cultural Economics, 23(4), 285-318.</p>
-<p>FiveThirtyEight. (2014). <em>Bechdel test movie list</em>. Retrieved from https://github.com/fivethirtyeight/data/tree/master/bechdel</p>
-<p>Prag, J., &amp; Casavant, J. (1994). An empirical study of the determinants of revenues and marketing expenditures in the motion picture industry. Journal of Cultural Economics, 18(3), 217–235.</p>
+<section id="citations" class="level1 unnumbered">
+
+
 </section>
 
-</main>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Citations</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-basuroy2003critical" class="csl-entry" role="listitem">
+Basuroy, Suman, Subimal Chatterjee, and S. Abraham Ravid. 2003. <span>“How Critical Are Critical Reviews? The Box Office Effects of Film Critics, Star Power, and Budgets.”</span> <em>Journal of Marketing</em> 67 (4): 103–17. <a href="https://doi.org/10.1509/jmkg.67.4.103.18692">https://doi.org/10.1509/jmkg.67.4.103.18692</a>.
+</div>
+<div id="ref-devany1999uncertainty" class="csl-entry" role="listitem">
+De Vany, Arthur, and W. David Walls. 1999. <span>“Uncertainty in the Movie Industry: Does Star Power Reduce the Terror of the Box Office?”</span> <em>Journal of Cultural Economics</em> 23 (4): 285–318.
+</div>
+<div id="ref-fivethirtyeight2014bechdel" class="csl-entry" role="listitem">
+FiveThirtyEight. 2014. <span>“Bechdel Test Movie List.”</span> <a href="https://github.com/fivethirtyeight/data/tree/master/bechdel">https://github.com/fivethirtyeight/data/tree/master/bechdel</a>.
+</div>
+<div id="ref-prag1994empirical" class="csl-entry" role="listitem">
+Prag, Jay, and James Casavant. 1994. <span>“An Empirical Study of the Determinants of Revenues and Marketing Expenditures in the Motion Picture Industry.”</span> <em>Journal of Cultural Economics</em> 18 (3): 217–35.
+</div>
+</div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {

@@ -24,9 +24,9 @@ This study investigates how movie budget predicts domestic box office revenue us
 
 # Introduction
 
-The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenu (Baasuroy, Chatterjee, & Ravid, 2003). However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie (De Vany & Walls, 1999).
+The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenue [@basuroy2003critical]. However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie [@devany1999uncertainty].
 
-Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. In this analysis, we use FiveThirtyEight's Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer the question: **How does movie budget predict movie revenue?** (FiveThirtyEight, 2014).
+Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. In this analysis, we use FiveThirtyEight's Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer the question: **How does movie budget predict movie revenue?** [@fivethirtyeight2014bechdel].
 
 ## Research Question
 
@@ -47,6 +47,8 @@ library(tidymodels)
 # Loading in Data
 #| vscode: {languageId: r}
 data("bechdel", package = "fivethirtyeight")
+
+data <- bechdel[, c("budget", "domgross")]
 ```
 
 ## Cleaning Data
@@ -57,29 +59,31 @@ Since our research question only requires studying 2 variables (movie budget - "
 #| vscode: {languageId: r}
 #| label: tbl-movie-data-cleaned
 #| tbl-cap: "First 6 rows of the data"
-movie_data <- bechdel[, c("budget", "domgross")]
+
+movie_data <- read.csv("../results/table1_first_six_rows.csv")
 knitr::kable(head(movie_data))
 ```
 
 
-Next, we will check our data for any null values and filter them out if there are any. 
+Next, we will check our data for any null values and filter them out if there are any.
 
 ```{r}
 #| vscode: {languageId: r}
-print(paste("# of null values (before filtering):", sum(is.na(movie_data))))
+print(paste("# of null values (before filtering):", sum(is.na(data))))
 
-movie_data <- movie_data %>%
+data <- data %>%
   filter(!is.na(budget), !is.na(domgross))
 
-print(paste("# of null values (after filtering):", sum(is.na(movie_data))))
+print(paste("# of null values (after filtering):", sum(is.na(data))))
 ```
 
 We will also check for any budget/revenue with a value of 0, since any movie with a $0 budget/revenue is most likely missing data.
 
 ```{r}
 #| vscode: {languageId: r}
-print(sum(movie_data$budget == 0))
-print(sum(movie_data$domgross == 0))
+print(paste("Movies with $0 budget after filtering:", sum(data$budget == 0)))
+
+print(paste("Movies with $0 budget after filtering:", sum(data$domgross == 0)))
 ```
 
 After seeing there is one entry with a non-zero budget but $0 revenue, we will first check to see what this value looks like. Since the value has a very high budget, we will say this entry is most likely having its appropriate budget missing and filter it out of the data set. 
@@ -88,19 +92,11 @@ After seeing there is one entry with a non-zero budget but $0 revenue, we will f
 #| vscode: {languageId: r}
 #| label: tbl-movie-data-rev
 #| tbl-cap: "Movies with a $0 revenue"
-#| 
-knitr::kable(movie_data[movie_data$domgross == 0, ])
 
-movie_data <- movie_data %>%
-  filter(budget > 0, domgross > 0)
+movie_data_zero_rev <- read.csv("../results/table2_zero_revenue.csv")
+knitr::kable(movie_data_zero_rev)
 ```
 
-
-```{r}
-#| vscode: {languageId: r}
-print(sum(movie_data$budget == 0))
-print(sum(movie_data$domgross == 0))
-```
 
 # EDA
 
@@ -108,32 +104,34 @@ Here, we will look at some general summary statistics of our data:
 
 ```{r}
 #| vscode: {languageId: r}
-summary(movie_data)
+eda_summary <- readLines("../results/eda_summary.csv")
+cat(eda_summary, sep = "\n")
 ```
 
 Here, we will look at the general shape/values in our data:
 
 ```{r}
 #| vscode: {languageId: r}
-str(movie_data)
+eda_str <- readLines("../results/eda-movie_data.csv")
+cat(eda_str, sep = "\n")
 ```
 
 Next, we will use different plots to examine the skew/behaviour of budget and revenue in the data. 
 
-In the box plots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.
+In @fig-eda-boxplots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.
 
 
-![Boxplots of Movie Budget and Revenue](../results/eda_boxplot.png){#fig-eda-boxplots}
+![Boxplots of Movie Budget and Revenue](../results/figure1-eda_boxplot.png){#fig-eda-boxplots}
 
-In the histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.
+In @fig-eda-histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.
 
-![Histograms of Movie Budget and Revenue](../results/eda_histogram.png){#fig-eda-histograms}
-
-
-Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing the scatter plot, we can see that the data may have a positive linear relationship.  The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.
+![Histograms of Movie Budget and Revenue](../results/figure2-eda_histogram.png){#fig-eda-histograms}
 
 
-![Scatterplot of Domestic Revenue vs Movie Budget](../results/eda_scatter_raw.png){#fig-eda-scatter-raw width=65% height=400px}
+Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing @fig-eda-rev-vs-bud, we can see that the data may have a positive linear relationship. The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.
+
+
+![Scatterplot of Domestic Revenue vs Movie Budget](../results/figure3-eda_revenue_vs_budget.png){#fig-eda-rev-vs-bud width=65% height=400px}
 
 
 ```{r}
@@ -144,16 +142,10 @@ corr <- corr_data$correlation[1]
 Since just observing the scatter plot makes it difficult to conclude how linear our data is, we can observe the correlation between movie budget and revenue. We can see that we have a correlation of around `r round(corr, 3)`, indicating that there may be a moderate positive relationship between our two variables. This correlation value allows us to further our analysis to see how well movie budget may predict movie revenue. 
 
 
-Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in the new scatter plot that applying this function helps make the data less spread out and easier to observe for patterns. 
-
-```{r}
-#| vscode: {languageId: r}
-movie_data <- movie_data %>% 
-  mutate(log_budget = log(budget), log_domgross = log(domgross))
-```
+Previously, we observed a very large spread. To account for this, we will apply a variance stabilizing function (log) to our variables to help stabilize the wide range of values. We can see in @fig-eda-log-scatter that applying this function helps make the data less spread out and easier to observe for patterns. 
 
 
-![Scatterplot of log(Domestic Revenue) vs log(Movie Budget)](../results/eda_scatter_log.png){#fig-eda-scatter-log width=65% height=400px}
+![Scatterplot of log(Domestic Revenue) vs log(Movie Budget)](../results/figure4-eda_log_revenue_vs_log_budget.png){#fig-eda-log-scatter width=65% height=400px}
 
 Here is our data with the log-transformed budget and revenue added:
 
@@ -164,7 +156,7 @@ Here is our data with the log-transformed budget and revenue added:
 #| label: tbl-movie-data-log
 #| tbl-cap: "First six rows with budget, domestic gross, and their log-transformed values"
 
-movie_data_log <- read.csv("../results/eda_summary.csv")
+movie_data_log <- read.csv("../results/table3_first_six_rows_log.csv")
 knitr::kable(head(movie_data_log))
 ```
 
@@ -180,7 +172,7 @@ Due to the relationship between movie budget and movie revenue being relatively 
 #| label: tbl-train-mean
 #| tbl-cap: "Mean log-budget and log-domestic revenue for the training set"
 
-train_mean <- read.csv("../results/linear_regression_train_mean.csv")
+train_mean <- read.csv("../results/table4_train_mean.csv")
 knitr::kable(train_mean)
 ```
 
@@ -189,7 +181,7 @@ knitr::kable(train_mean)
 #| label: tbl-test-mean
 #| tbl-cap: "Mean log-budget and log-domestic revenue for the test set"
 
-test_mean <- read.csv("../results/linear_regression_test_mean.csv")
+test_mean <- read.csv("../results/table5_test_mean.csv")
 knitr::kable(test_mean)
 ```
 
@@ -199,7 +191,7 @@ Below we fit a simple linear regression with the log-transformed versions of mov
 ```{r}
 #| vscode: {languageId: r}
 
-lm_summary <- readLines("../results/linear_regression_summary.txt")
+lm_summary <- readLines("../results/linear_regression_summary.csv")
 cat(lm_summary, sep = "\n")
 ```
 
@@ -210,12 +202,12 @@ Using the fitted model above, we predict on the test set.
 #| label: tbl-lm-preds
 #| tbl-cap: "Predicted log domestic revenue with the corresponding log-budget and actual log-domestic revenue for test set"
 
-preds <- read.csv("../results/linear_regression_preds.csv")
+preds <- read.csv("../results/table6_linear_regression_preds.csv")
 knitr::kable(head(preds))
 ```
 
 
-![Scatterplot of log(movie budget) vs log(domestic revenue) for the test set](../results/linear_regression_pred.png){#fig-lm-scatter-pred width=65% height=400px}
+![Scatterplot of log(movie budget) vs log(domestic revenue) for the test set](../results/figure5_linear_regression_pred.png){#fig-lm-scatter-pred width=65% height=400px}
 
 
 ```{r}
@@ -223,8 +215,8 @@ knitr::kable(head(preds))
 #| label: tbl-lm-metrics
 #| tbl-cap: "RMSE of the linear regression model"
 
-metrics <- read.csv("../results/linear_regression_metrics.csv")
-knitr::kable(head(metrics))
+metrics <- read.csv("../results/table7_linear_regression_metrics.csv")
+knitr::kable(metrics)
 
 ```
 
@@ -241,133 +233,73 @@ The RMSE is `r round(estimate, 3)`. This means on average, the model’s predict
 
 Below, we also try fitting a K-nearest neighbours (KNN) regression model using cross-validation to compare whether RMSE might be improved compared to the linear model. First, we create the recipe and set log-transformed revenue as our dependent variable and log-transformed budget as our independent predictor variable, while scaling and centering the predictor. 
 
-Next, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.
+Then, we set our model parameters to use KNN for regression, split the data into 5 folds for cross validation, and create a workflow with our model and recipe.
 
-```{r}
-#| vscode: {languageId: r}
-knn_recipe <- recipe(log_domgross ~ log_budget, data = train) |>
-  step_scale(all_predictors()) |>
-  step_center(all_predictors())
-
-knn_spec <- nearest_neighbor(weight_func = "rectangular",
-                              neighbors = tune()) |>
-  set_engine("kknn") |>
-  set_mode("regression")
-
-knn_vfold <- vfold_cv(train, v = 10, strata = log_domgross)
-
-knn_wkflw <- workflow() |>
-  add_recipe(knn_recipe) |>
-  add_model(knn_spec)
-```
-
-Below we test every 3rd number of neighbours between 1 and 200, set using tibble(), then filtered for the metric root mean standard error (RMSE) to evaluate the fit. 
 
 ```{r}
 #| vscode: {languageId: r}
 #| label: tbl-knn-cv-rmse
 #| tbl-cap: "Cross-validated RMSE for different K values in KNN regression (first 6 rows)."
 
-set.seed(120)
-gridvals <- tibble(neighbors = seq(from = 1, to = 200, by = 3))
-
-knn_results <- knn_wkflw |>
-  tune_grid(resamples = knn_vfold, grid = gridvals) |>
-  collect_metrics() |>
-  filter(.metric == "rmse")
-
-knitr::kable(head(head(knn_results)))
+knn_results <- read.csv("../results/table7_knn_tune_results.csv")
+knitr::kable(knn_results)
 ```
 
-Below, we filter the results to get the K value with the lowest associated RMSE.
+In @tbl-knn-cv-rmse, we test every 3rd number of neighbours between 1 and 200, set using tibble(), then filtered for the metric root mean standard error (RMSE) to evaluate the fit. 
+
 
 ```{r}
 #| vscode: {languageId: r}
-knn_min <- knn_results |>
-  filter(mean == min(mean))
+#| label: tbl-knn-min
+#| tbl-cap: "The minimum RMSE is at K=88."
 
-knn_min
+knn_results <- read.csv("../results/table8_knn_min.csv")
+knitr::kable(knn_results)
 ```
 
-**Table 8 :** The minimum RMSE is at K=88.
+In @tbl-knn-min, we filter the results to get the K value with the lowest associated RMSE.
 
 ```{r}
 #| vscode: {languageId: r}
-set.seed(120)
-kmin <- knn_min |> pull(neighbors)
+#| label: tbl-knn-cv-metrics
+#| tbl-cap: "Cross-validated RMSE for KNN regression model at K = 88."
 
-knn_spec_min <- nearest_neighbor(weight_func = "rectangular", neighbors = kmin) |>
-  set_engine("kknn") |>
-  set_mode("regression")
+knn_cv_metrics <- read.csv("../results/table8_knn_cv_metrics.csv")
+knitr::kable(knn_cv_metrics)
 
-cv_metrics <- workflow() |>
-  add_recipe(knn_recipe) |>
-  add_model(knn_spec_min) |>
-   fit_resamples(resamples = knn_vfold)|>
-   collect_metrics() |>
-   filter(.metric == 'rmse')
-cv_metrics
+knn_estimate_exp <- knn_cv_metrics$mean
+knn_std <- knn_cv_metrics$std_err
 ```
 
-**Table 8 :** Cross-validated RMSE for KNN regression model at K = 88.
 
-For the training set, the average RMSE across the 10 folds is 1.36 log units with a standard error of 0.061.
+In @tbl-knn-cv-metrics, we find the cross-validated RMSE for the model at `r read.csv("../results/table8_knn_best_k.csv")[1]`.
+For the training set, the average RMSE across the 10 folds is `r round(knn_estimate_exp, 2)` log units with a standard error of `r round(knn_std, 2)`.
 
 ```{r}
 #| vscode: {languageId: r}
-knn_fit_min <- workflow() |>
-  add_recipe(knn_recipe) |>
-  add_model(knn_spec_min) |>
-  fit(data = train)
+#| label: tbl-knn-summary
+#| tbl-cap: "RMSE of the KNN regression model"
 
-knn_summary <- knn_fit_min |>
-  predict(test) |>
-  bind_cols(test) |>
-  metrics(truth = log_domgross, estimate = .pred) |>
-  filter(.metric == 'rmse')
-
-knn_summary
+knn_summary <- read.csv("../results/table9_knn_metrics.csv")
+knitr::kable(knn_summary)
 ```
 
-**Table 9 :** RMSPE of the KNN regression model
 
-```{r}
-#| vscode: {languageId: r}
-exp(knn_summary$.estimate)
-```
-
-The test RMSPE of 1.28 means that, on average, the KNN model’s predicted log revenue differs from the actual log revenue by about 1.28. On average, the predicted revenue can be roughly 3.6 times higher or lower than the actual revenue.
+From @tbl-knn-summary, the test RMSPE of `r round(knn_summary$.estimate, 2)` means that, on average, the KNN model’s predicted log revenue differs from the actual log revenue by about `r round(knn_summary$.estimate, 2)`. On average, the predicted revenue can be roughly `r round(exp(knn_summary$.estimate), 2)` times higher or lower than the actual revenue.
 
 So, both KNN and linear regression have similar predictive accuracy, with linear regression being slightly better.
 
-```{r}
-#| vscode: {languageId: r}
-knn_preds <- knn_fit_min |>
-  predict(test) |>
-  bind_cols(test) |>
-  rename(log_domgross_pred = .pred)
 
-ggplot(knn_preds, aes(x = log_budget, y = log_domgross)) +
-  geom_point(alpha = 0.6) +                                
-  geom_line(aes(y = log_domgross_pred), color = "blue") +
-  labs(
-    title = "KNN Regression: Predicted vs Actual",
-    x = "Log(Movie Budget)",
-    y = "Log(Domestic Revenue)"
-  ) + ggtitle(paste0("K = ", kmin)) +
-  theme_minimal()
-```
-
-**Figure 6 :** Predicted values of log(movie revenue) (blue line) for the final K-NN regression model
+![Predicted values of log(movie revenue) (blue line) for the final K-NN regression model](../results/figure6_knn_pred.png){#fig-lm-scatter-pred width=65% height=400px}
 
 
 # Discussion
 
-Our analysis suggests that movie budget is moderately associated with domestic box office revenue. The exploratory analysis showed a positive relationship between the two variables, supported by a correlation coefficient of approximately 0.63, indicating a moderate positive association. As the raw data is heavily right-skewed, applying a logarithmic transformation to both variables helped reduce the skewness and produced a more linear relationship suitable for modelling.
+Our analysis suggests that movie budget is moderately associated with domestic box office revenue. The exploratory analysis showed a positive relationship between the two variables, supported by a correlation coefficient of approximately `r round(corr, 2)`, indicating a moderate positive association. As the raw data is heavily right-skewed, applying a logarithmic transformation to both variables helped reduce the skewness and produced a more linear relationship suitable for modelling.
 
-The linear regression model fitted on the log-transformed variables indicated that log-budget is a statistically significant predictor of log-revenue. This suggests that increases in movie budget tend to correspond with increases in domestic box office revenue on average. When evaluated on the test set, the model produced an RMSPE of approximately 1.27 log units, meaning predicted revenue may differ from the true revenue by roughly a factor of 3.5 on average.
+The linear regression model fitted on the log-transformed variables indicated that log-budget is a statistically significant predictor of log-revenue. This suggests that increases in movie budget tend to correspond with increases in domestic box office revenue on average. When evaluated on the test set, the model produced an RMSPE of approximately `r round(estimate, 2)` log units, meaning predicted revenue may differ from the true revenue by roughly a factor of `r round(estimate_exp, 2)` on average.
 
-To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = 88, producing a test RMSPE of approximately 1.28, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes (Prag & Casavant, 1994).
+To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = `r read.csv("../results/table8_knn_best_k.csv")[1]`, producing a test RMSPE of approximately `r round(knn_estimate_exp, 2)`, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes [@prag1994empirical].
 
 Despite the observed relationship, a couple of limitations exist in this analysis. First, the models only consider budget as a single predictor, when movie revenue is likely influenced by many additional factors such as marketing, release timing, critical reception, and star power. Second, the dataset only includes domestic revenue, where particular films may have performed differently internationally.
 
@@ -376,11 +308,3 @@ Future work could improve predictive performance by incorporating additional var
 Overall, our findings suggest that movie budget does have a moderate predictive relationship with domestic revenue, but it is not a complete predictor of financial success.
 
 # Citations
-
-Basuroy, S., Chatterjee, S., & Ravid, S. A. (2003). *How critical are critical reviews? The box office effects of film critics, star power, and budgets.* Journal of marketing, 67(4), 103-117. https://doi.org/10.1509/jmkg.67.4.103.18692
-
-De Vany, A., & Walls, W. D. (1999). *Uncertainty in the movie industry: Does star power reduce the terror of the box office?* Journal of Cultural Economics, 23(4), 285-318.
-
-FiveThirtyEight. (2014). *Bechdel test movie list*. Retrieved from https://github.com/fivethirtyeight/data/tree/master/bechdel
-
-Prag, J., & Casavant, J. (1994). An empirical study of the determinants of revenues and marketing expenditures in the motion picture industry. Journal of Cultural Economics, 18(3), 217–235.
