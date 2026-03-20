@@ -43,8 +43,9 @@ knn_results <- knn_wkflw |>
 write.csv(head(knn_results, 6), paste0(out, "/table7_knn_tune_results.csv"), row.names = FALSE)
 
 knn_min <- knn_results |> filter(mean == min(mean))
-kmin <- knn_min |> pull(neighbors)
 write.csv(knn_min, paste0(out, "/table8_knn_min.csv"), row.names = FALSE)
+set.seed(120)
+kmin <- knn_min |> pull(neighbors)
 
 knn_spec_min <- nearest_neighbor(weight_func = "rectangular", neighbors = kmin) |>
   set_engine("kknn") |>
