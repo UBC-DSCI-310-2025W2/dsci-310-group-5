@@ -1,0 +1,7 @@
+"neighbors",".metric",".estimator","mean","n","std_err",".config"
+1,"rmse","standard",1.81731736801958,10,0.058039400192207,"pre0_mod01_post0"
+4,"rmse","standard",1.50361705479147,10,0.0372931142541748,"pre0_mod02_post0"
+7,"rmse","standard",1.4286559987541,10,0.0401403465117462,"pre0_mod03_post0"
+10,"rmse","standard",1.40148173024246,10,0.0367760141077019,"pre0_mod04_post0"
+13,"rmse","standard",1.39419846388663,10,0.0385236804571511,"pre0_mod05_post0"
+16,"rmse","standard",1.39285246978594,10,0.0426487614752057,"pre0_mod06_post0"

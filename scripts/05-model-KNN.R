@@ -17,9 +17,9 @@ out <- dirname(opt$output)
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
 set.seed(120)
-split <- initial_split(data, prop = 0.7)
-train <- training(split)
-test <- testing(split)
+data_split <- initial_split(data, prop = 0.7)
+train <- training(data_split)
+test <- testing(data_split)
 
 knn_recipe <- recipe(log_domgross ~ log_budget, data = train) |>
   step_scale(all_predictors()) |>
@@ -29,10 +29,9 @@ knn_spec <- nearest_neighbor(weight_func = "rectangular", neighbors = tune()) |>
   set_engine("kknn") |>
   set_mode("regression")
 
+set.seed(120)
 knn_vfold <- vfold_cv(train, v = 10, strata = log_domgross)
-knn_wkflw <- workflow() |>
-  add_recipe(knn_recipe) |>
-  add_model(knn_spec)
+knn_wkflw <- workflow() |> add_recipe(knn_recipe) |> add_model(knn_spec)
 
 set.seed(120)
 gridvals <- tibble(neighbors = seq(from = 1, to = 200, by = 3))
@@ -41,25 +40,51 @@ knn_results <- knn_wkflw |>
   collect_metrics() |>
   filter(.metric == "rmse")
 
-kmin <- knn_results |> filter(mean == min(mean)) |> pull(neighbors)
+write.csv(head(knn_results, 6), paste0(out, "/table7_knn_tune_results.csv"), row.names = FALSE)
+
+knn_min <- knn_results |> filter(mean == min(mean))
+kmin <- knn_min |> pull(neighbors)
+write.csv(knn_min, paste0(out, "/table8_knn_min.csv"), row.names = FALSE)
+
 knn_spec_min <- nearest_neighbor(weight_func = "rectangular", neighbors = kmin) |>
   set_engine("kknn") |>
   set_mode("regression")
 
-knn_fit <- workflow() |> add_recipe(knn_recipe) |> add_model(knn_spec_min) |> fit(data = train)
-
-preds <- knn_fit |> predict(test) |> bind_cols(test) |> rename(log_domgross_pred = .pred)
-
-metrics <- preds |> metrics(truth = log_domgross, estimate = log_domgross_pred) |>
+cv_metrics <- workflow() |>
+  add_recipe(knn_recipe) |>
+  add_model(knn_spec_min) |>
+  fit_resamples(resamples = knn_vfold) |>
+  collect_metrics() |>
   filter(.metric == "rmse")
-write.csv(metrics, paste0(out, "/knn_metrics.csv"), row.names = FALSE)
-write.csv(data.frame(neighbors = kmin), paste0(out, "/knn_best_k.csv"), row.names = FALSE)
+write.csv(cv_metrics, paste0(out, "/table8_knn_cv_metrics.csv"), row.names = FALSE)
 
-preds_sorted <- preds |> arrange(log_budget)
-p <- ggplot(preds_sorted, aes(x = log_budget, y = log_domgross)) +
+knn_fit_min <- workflow() |>
+  add_recipe(knn_recipe) |>
+  add_model(knn_spec_min) |>
+  fit(data = train)
+
+knn_summary <- knn_fit_min |>
+  predict(test) |>
+  bind_cols(test) |>
+  metrics(truth = log_domgross, estimate = .pred) |>
+  filter(.metric == 'rmse')
+
+write.csv(knn_summary, paste0(out, "/table9_knn_metrics.csv"), row.names = FALSE)
+write.csv(data.frame(neighbors = kmin), paste0(out, "/table8_knn_best_k.csv"), row.names = FALSE)
+
+knn_preds <- knn_fit_min |>
+  predict(test) |>
+  bind_cols(test) |>
+  rename(log_domgross_pred = .pred)
+write.csv(knn_preds |> select(log_domgross_pred, log_budget, log_domgross), paste0(out, "/knn_preds.csv"), row.names = FALSE)
+
+p <- ggplot(knn_preds, aes(x = log_budget, y = log_domgross)) +
   geom_point(alpha = 0.6) +
   geom_line(aes(y = log_domgross_pred), color = "blue") +
-  labs(title = paste0("KNN Regression (K = ", kmin, "): Predicted vs Actual"),
-       x = "Log(Movie Budget)", y = "Log(Domestic Revenue)") +
+  labs(
+    title = "KNN Regression: Predicted vs Actual",
+    x = "Log(Movie Budget)",
+    y = "Log(Domestic Revenue)"
+  ) + ggtitle(paste0("K = ", kmin)) +
   theme_minimal()
-ggsave(paste0(out, "/knn_pred.png"), p)
+ggsave(paste0(out, "/figure6_knn_pred.png"), p)
