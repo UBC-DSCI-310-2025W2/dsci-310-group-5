@@ -1,8 +1,6 @@
 services:
   analysis:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: nikip901/movie-revenue-test:c1461a1  # e.g. nikip901/movie-revenue-test:a1b2c3d
     ports:
       - "8888:8888"
     volumes:
