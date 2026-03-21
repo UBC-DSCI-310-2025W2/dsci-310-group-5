@@ -1,42 +1,54 @@
 "Usage:
-  03-eda.R --input=<path> --output=<path>
+  03-eda.R --input=<path> --output=<path> --output_data=<path>
 
 Options:
   --input=<path>   Path to data
-  --output=<path>  Path/filename prefix (e.g. results/eda)
+  --output=<path>  Path/filename prefix
+  --output_data=<path> Path to save data with log transformations
 " -> doc
 
 library(docopt)
 library(ggplot2)
+library(dplyr)
 
-main <- function(input, output) {
-  data <- read.csv(input)
+main <- function(input, output,output_data) {
+  movie_data  <- read.csv(input)
   out <- dirname(output)
   dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
-  writeLines(capture.output(summary(data)), paste0(out, "/eda_summary.csv"))
-  writeLines(capture.output(str(data)), paste0(out, "/eda-movie_data.csv"))
+  writeLines(capture.output(summary(movie_data )), paste0(out, "/eda_summary.csv"))
+  writeLines(capture.output(str(movie_data )), paste0(out, "/eda-movie_data.csv"))
 
   png(paste0(out, "/figure1-eda_boxplot.png"))
   par(mfrow = c(1, 2))
-  boxplot(data$budget, main = "Boxplot of Movie Budget", ylab = "Budget in USD")
-  boxplot(data$domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue in USD")
+  boxplot(movie_data $budget, main = "Boxplot of Movie Budget", ylab = "Budget in USD")
+  boxplot(movie_data $domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue in USD")
+  par(mfrow = c(1,1))
 
   png(paste0(out, "/figure2-eda_histogram.png"))
   par(mfrow = c(1, 2))
-  hist(data$budget, main = "Histogram of Movie Budget", xlab = "Budget in USD")
-  hist(data$domgross, main = "Histogram of Movie Revenue", xlab = "Revenue in USD")
+  hist(movie_data $budget, main = "Histogram of Movie Budget", xlab = "Budget in USD")
+  hist(movie_data $domgross, main = "Histogram of Movie Revenue", xlab = "Revenue in USD")
+  par(mfrow = c(1,1))
 
   ggsave(paste0(out, "/figure3-eda_revenue_vs_budget.png"),
-    ggplot(data, aes(budget, domgross)) + geom_point() + geom_smooth(method = "lm") +
+    ggplot(movie_data , aes(budget, domgross)) + geom_point() + geom_smooth(method = "lm") +
     labs(title = "Domestic Revenue vs Movie Budget", x = "Budget (USD)", y = "Revenue (USD)"))
 
-  write.csv(data.frame(correlation = cor(data$budget, data$domgross)), paste0(out, "/eda_correlation.csv"), row.names = FALSE)
+  write.csv(data.frame(correlation = cor(movie_data $budget, movie_data $domgross)), paste0(out, "/eda_correlation.csv"), row.names = FALSE)
+
+  movie_data <- movie_data %>%
+    mutate(log_budget = log(budget), log_domgross = log(domgross))
+
+  write.csv(movie_data, output_data, row.names = FALSE)
 
   ggsave(paste0(out, "/figure4-eda_log_revenue_vs_log_budget.png"),
-    ggplot(data, aes(log_budget, log_domgross)) + geom_point() + geom_smooth(method = "lm") +
+    ggplot(movie_data, aes(log_budget, log_domgross)) + geom_point() + geom_smooth(method = "lm") +
     labs(title = "Log(Revenue) vs Log(Budget)", x = "Log(Budget)", y = "Log(Revenue)"))
+
+  write.csv(head(movie_data, 6), paste0(out, "/table3_first_six_rows_log.csv"), row.names = FALSE)
+
 }
 
 opt <- docopt(doc)
-main(opt$input, opt$output)
+main(opt$input, opt$output, opt$output_data)

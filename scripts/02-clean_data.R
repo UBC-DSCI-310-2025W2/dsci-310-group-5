@@ -28,10 +28,6 @@ main <- function(input, output, output_results) {
   movie_data <- movie_data %>%
     filter(budget > 0, domgross > 0)
 
-  movie_data <- movie_data %>%
-    mutate(log_budget = log(budget), log_domgross = log(domgross))
-
-  write.csv(head(movie_data, 6), paste0(output_results, "/table3_first_six_rows_log.csv"), row.names = FALSE)
   write.csv(movie_data, output, row.names = FALSE)
 }
 

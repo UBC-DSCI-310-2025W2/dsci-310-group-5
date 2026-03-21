@@ -36,7 +36,8 @@ write.csv(preds, paste0(out, "/table6_linear_regression_preds.csv"), row.names =
 preds_plot <- preds |>
   ggplot(aes(x = log_budget, y = log_domgross)) +
   geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
+  geom_smooth(method = "lm", se = FALSE) +
+    labs(title = "Log(Revenue) vs Log(Budget)", x = "Log(Budget)", y = "Log(Revenue)")
 ggsave(paste0(out, "/figure5_linear_regression_pred.png"), preds_plot)
 
 metrics <- metrics(preds, truth = log_domgross, estimate = log_domgross_preds) |>
