@@ -66,19 +66,6 @@ When finished, enter the following command to remove the container.
 ```bash
 docker-compose down
 ```
-
-## Running the R scripts 
-
-Rscript scripts/01-download_data.R --input="https://raw.githubusercontent.com/fivethirtyeight/data/master/bechdel/movies.csv" --output=data/raw/raw_bechdel.csv
-
-Rscript scripts/02-clean_data.R --input=data/raw/raw_bechdel.csv --output=data/processed/clean_bechdel.csv --output_results=results
-
-Rscript scripts/03-eda.R --input=data/processed/clean_bechdel.csv --output=results/eda --output_data=data/processed/clean_bechdel.csv
-
-Rscript scripts/04-model-linear_regression.R --input=data/processed/clean_bechdel.csv --output=results/linear_regression
-
-Rscript scripts/05-model-KNN.R --input=data/processed/clean_bechdel.csv --output=results/knn
-
 ## License Information
 The source code for this project is licensed under the MIT License.
 
