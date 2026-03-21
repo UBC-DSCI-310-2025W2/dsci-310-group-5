@@ -40,10 +40,10 @@ knn_results <- knn_wkflw |>
   collect_metrics() |>
   filter(.metric == "rmse")
 
-write.csv(head(knn_results, 6), paste0(out, "/table7_knn_tune_results.csv"), row.names = FALSE)
+write.csv(head(knn_results, 6), paste0(out, "/table8_knn_tune_results.csv"), row.names = FALSE)
 
 knn_min <- knn_results |> filter(mean == min(mean))
-write.csv(knn_min, paste0(out, "/table8_knn_min.csv"), row.names = FALSE)
+write.csv(knn_min, paste0(out, "/table9_knn_min.csv"), row.names = FALSE)
 set.seed(120)
 kmin <- knn_min |> pull(neighbors)
 
@@ -57,7 +57,7 @@ cv_metrics <- workflow() |>
   fit_resamples(resamples = knn_vfold) |>
   collect_metrics() |>
   filter(.metric == "rmse")
-write.csv(cv_metrics, paste0(out, "/table8_knn_cv_metrics.csv"), row.names = FALSE)
+write.csv(cv_metrics, paste0(out, "/table10_knn_cv_metrics.csv"), row.names = FALSE)
 
 knn_fit_min <- workflow() |>
   add_recipe(knn_recipe) |>
@@ -70,8 +70,8 @@ knn_summary <- knn_fit_min |>
   metrics(truth = log_domgross, estimate = .pred) |>
   filter(.metric == 'rmse')
 
-write.csv(knn_summary, paste0(out, "/table9_knn_metrics.csv"), row.names = FALSE)
-write.csv(data.frame(neighbors = kmin), paste0(out, "/table8_knn_best_k.csv"), row.names = FALSE)
+write.csv(knn_summary, paste0(out, "/table11_knn_metrics.csv"), row.names = FALSE)
+#write.csv(data.frame(neighbors = kmin), paste0(out, "/table8_knn_best_k.csv"), row.names = FALSE)
 
 knn_preds <- knn_fit_min |>
   predict(test) |>
