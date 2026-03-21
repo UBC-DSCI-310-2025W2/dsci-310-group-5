@@ -1,17 +1,16 @@
 "Usage:
-  03-eda.R --input=<path> --output=<path> --output_data=<path>
+  03-eda.R --input=<path> --output=<path>
 
 Options:
   --input=<path>   Path to data
   --output=<path>  Path/filename prefix
-  --output_data=<path> Path to save data with log transformations
 " -> doc
 
 library(docopt)
 library(ggplot2)
 library(dplyr)
 
-main <- function(input, output,output_data) {
+main <- function(input, output) {
   movie_data  <- read.csv(input)
   out <- dirname(output)
   dir.create(out, recursive = TRUE, showWarnings = FALSE)
@@ -40,7 +39,7 @@ main <- function(input, output,output_data) {
   movie_data <- movie_data %>%
     mutate(log_budget = log(budget), log_domgross = log(domgross))
 
-  write.csv(movie_data, output_data, row.names = FALSE)
+  write.csv(movie_data, row.names = FALSE)
 
   ggsave(paste0(out, "/figure4-eda_log_revenue_vs_log_budget.png"),
     ggplot(movie_data, aes(log_budget, log_domgross)) + geom_point() + geom_smooth(method = "lm") +
@@ -51,4 +50,4 @@ main <- function(input, output,output_data) {
 }
 
 opt <- docopt(doc)
-main(opt$input, opt$output, opt$output_data)
+main(opt$input, opt$output)
