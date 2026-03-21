@@ -27,7 +27,7 @@ write.csv(train_mean, paste0(out, "/table4_train_mean.csv"), row.names = FALSE)
 write.csv(test_mean, paste0(out, "/table5_test_mean.csv"), row.names = FALSE)
 
 lm <- lm(formula = log_domgross ~ log_budget, data = train)
-writeLines(capture.output(summary(lm)), paste0(out, "/linear_regression_summary.txt"))
+writeLines(capture.output(summary(lm)), paste0(out, "/linear_regression_summary.csv"))
 
 preds <- predict(lm, test) |> bind_cols(test)
 preds <- preds |> rename(log_domgross_preds = ...1) |> select(log_domgross_preds, log_budget, log_domgross)
@@ -43,7 +43,3 @@ ggsave(paste0(out, "/figure5_linear_regression_pred.png"), preds_plot)
 metrics <- metrics(preds, truth = log_domgross, estimate = log_domgross_preds) |>
   filter(.metric == "rmse")
 write.csv(metrics, paste0(out, "/table7_linear_regression_metrics.csv"), row.names = FALSE)
-
-writeLines(
-  paste(exp(metrics$.estimate)), file.path(out, "exp_rmspe_lr.txt")
-)
