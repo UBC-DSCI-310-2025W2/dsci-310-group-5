@@ -83,3 +83,6 @@ The source code for this project is licensed under the MIT License.
 The written report and analysis are licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) license.
 
 Please refer [here](LICENSE.md) for full license details.
+
+## Contributions
+Please refer [here](CONTRIBUTING.md) for more details on contributions. 
