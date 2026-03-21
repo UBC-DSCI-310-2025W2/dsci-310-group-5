@@ -23,7 +23,7 @@ lm_metrics <- read.csv("../results/table7_linear_regression_metrics.csv")
 estimate <- lm_metrics$.estimate
 estimate_exp <- exp(lm_metrics$.estimate)
 
-knn_summary <- read.csv("../results/table11_knn_rmse.csv")
+knn_summary <- read.csv("../results/table11_knn_metrics.csv")
 ```
 
 # Summary
@@ -242,7 +242,7 @@ In @tbl-knn-min, we filter the results to get the K value with the lowest associ
 #| label: tbl-knn-cv-metrics
 #| tbl-cap: "Cross-validated RMSE for KNN regression model at previously found K-value."
 
-knn_cv_metrics <- read.csv("../results/table10_knn_cv_rmse.csv")
+knn_cv_metrics <- read.csv("../results/table10_knn_cv_metrics.csv")
 knitr::kable(knn_cv_metrics)
 
 knn_estimate <- knn_cv_metrics$mean
@@ -250,7 +250,7 @@ knn_std <- knn_cv_metrics$std_err
 ```
 
 
-In @tbl-knn-cv-metrics, we find the cross-validated RMSE for the model at K = `r read.csv("../results/table8_knn_best_k.csv")[1]`.
+In @tbl-knn-cv-metrics, we find the cross-validated RMSE for the model at K = `r knn_results[1]`.
 For the training set, the average RMSE across the 10 folds is `r round(knn_estimate, 2)` log units with a standard error of `r round(knn_std, 2)`.
 
 ```{r}
@@ -276,7 +276,7 @@ Our analysis suggests that movie budget is moderately associated with domestic b
 
 The linear regression model fitted on the log-transformed variables indicated that log-budget is a statistically significant predictor of log-revenue. This suggests that increases in movie budget tend to correspond with increases in domestic box office revenue on average. When evaluated on the test set, the model produced an RMSPE of approximately `r round(estimate, 2)` log units, meaning predicted revenue may differ from the true revenue by roughly a factor of `r round(estimate_exp, 2)` on average.
 
-To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = `r read.csv("../results/table8_knn_best_k.csv")[1]`, producing a test RMSPE of approximately `r round(knn_estimate, 2)`, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes [@prag1994empirical].
+To evaluate whether a more flexible model could improve prediction accuracy, we also trained a KNN model with cross-validation to tune the number of neighbours. The optimal value with K = `r knn_results[1]`, producing a test RMSPE of approximately `r round(knn_estimate, 2)`, very similar to the linear regression model. Since KNN did not significantly improve predictive performance, this suggests that the relationship between log-budget and log-revenue is reasonably captured by the simpler linear model. Consistent with previous research on film economics, our results suggest that while budget is associated with higher revenue, it alone cannot fully explain the variability in box office outcomes [@prag1994empirical].
 
 Despite the observed relationship, a couple of limitations exist in this analysis. First, the models only consider budget as a single predictor, when movie revenue is likely influenced by many additional factors such as marketing, release timing, critical reception, and star power. Second, the dataset only includes domestic revenue, where particular films may have performed differently internationally.
 
