@@ -17,17 +17,17 @@ results/table7_linear_regression_metrics.csv results/table8_knn_best_k.csv \
 results/table8_knn_tune_results.csv results/table9_knn_min.csv
 
 # generating cleaned dataframe and cleaned data outputs 
-results/clean_bechdel.csv results/table1_first_six_rows results/table2_zero_revenue: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/raw/raw_bechdel.csv" \
-		--output="results/clean_bechdel.csv" \
-		--output_results="results/" 
-
-data/processed/clean_bechdel.csv: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
+data/processed/clean_bechdel.csv results/table1_first_six_rows results/table2_zero_revenue: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
 	Rscript scripts/02-clean_data.R \
 		--input="data/raw/raw_bechdel.csv" \
 		--output="data/processed/clean_bechdel.csv" \
 		--output_results="results/" 
+
+# data/processed/clean_bechdel.csv: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
+# 	Rscript scripts/02-clean_data.R \
+# 		--input="data/raw/raw_bechdel.csv" \
+# 		--output="data/processed/clean_bechdel.csv" \
+# 		--output_results="results/" 
 
 results/NA_after_filter.txt: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
 	Rscript scripts/02-clean_data.R \
@@ -117,113 +117,118 @@ results/eda_summary.txt: data/processed/clean_bechdel.csv scripts/03-eda.R
 		--input="data/processed/clean_bechdel.csv" \
 		--output="results/eda_summary.txt" 
 
+results/clean_bechdel.csv: data/processed/clean_bechdel.csv scripts/03-eda.R
+	Rscript scripts/03-eda.R \
+		--input="data/processed/clean_bechdel.csv" \
+		--output="results/clean_bechdel.csv"
+
 # generate figures for linear regression 
 
-results/table1_first_six_rows.csv: data/processed/clean_bechdel.csv scripts/04-model-linear_regression.R
+results/table1_first_six_rows.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table1_first_six_rows.csv" 
 
-results/table2_zero_revenue.csv: data/processed/clean_bechdel.csv scripts/04-model-linear_regression.R
+results/table2_zero_revenue.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/,04-model-linear_regression.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table2_zero_revenue.csv"
 
-results/table3_first_six_rows_log.csv: data/processed/clean_bechdel.csv scripts/04-model-linear_regression.R
+results/table3_first_six_rows_log.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table3_first_six_rows_log.csv"
 
-results/table4_train_mean.csv: results/eda_summary.txt scripts/04-model-linear_regression.R
+results/table4_train_mean.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table4_train_mean.csv" 
 
-results/table5_test_mean.csv: results/eda_summary.txt scripts/04-model-linear_regression.R
+results/table5_test_mean.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table5_test_mean.csv:" 
 
-results/table6_linear_regression_preds.csv: data/processed/clean_bechdel.csv scripts/04-model-linear_regression.R
+results/table6_linear_regression_preds.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table6_linear_regression_preds.csv" 
 
-results/linear_regression_summary.csv: data/processed/clean_bechdel.csv scripts/04-model-linear_regression.R
+results/linear_regression_summary.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/linear_regression_summary.csv" 
 
-results/table7_linear_regression_metrics.csv: data/processed/clean_bechdel.csv scripts/04-model-linear_regression.R
+results/table7_linear_regression_metrics.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table7_linear_regression_metrics.csv" 
 
-results/exp_rmspe_lr.txt: results/eda_summary.txt scripts/05-model-KNN.R
+results/exp_rmspe_lr.txt: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/knn_preds.csv" 
 
-results/linear_regression_summary.txt: results/eda_summary.txt scripts/05-model-KNN.R
+results/linear_regression_summary.txt: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/knn_preds.csv" 
 
 # generate tables and figures for knn regression 
 
-results/table7_knn_tune_results.csv: data/processed/clean_bechdel.csv scripts/05-model-KNN.R
+results/table7_knn_tune_results.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table7_knn_tune_results.csv" 
 
-results/table8_knn_best_k.csv: data/processed/clean_bechdel.csv scripts/05-model-KNN.R
+results/table8_knn_best_k.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table8_knn_best_k.csv" 
 
-results/table8_knn_tune_results.csv: results/eda_summary.txt scripts/05-model-KNN.R
+results/table8_knn_tune_results.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table8_knn_tune_results.csv" 
 
-results/table8_knn_cv_metrics.csv: data/processed/clean_bechdel.csv scripts/05-model-KNN.R
+results/table8_knn_cv_metrics.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table8_knn_cv_metrics.csv" 
 
-results/table8_knn_min.csv : data/processed/clean_bechdel.csv scripts/05-model-KNN.R
+results/table8_knn_min.csv : results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table8_knn_min.csv" 
 
-results/table9_knn_metrics.csv: data/processed/clean_bechdel.csv scripts/05-model-KNN.R
+results/table9_knn_metrics.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="data/processed/clean_bechdel.csv" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table9_knn_metrics.csv" 
 
-results/table9_knn_min.csv: results/eda_summary.txt scripts/05-model-KNN.R
+results/table9_knn_min.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/table9_knn_min.csv"
 
-results/knn_preds.csv: results/eda_summary.txt scripts/05-model-KNN.R
+results/knn_preds.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/knn_preds.csv" 
 
-results/exp_rmspe_knn.txt: results/eda_summary.txt scripts/05-model-KNN.R
+results/exp_rmspe_knn.txt: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/knn_preds.csv" 
 
-results/table10_knn_cv_rmse.csv: results/eda_summary.txt scripts/05-model-KNN.R
+results/table10_knn_cv_rmse.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/knn_preds.csv" 
 
-results/table11_knn_rmse.csv: results/eda_summary.txt scripts/05-model-KNN.R
+results/table11_knn_rmse.csv: results/clean_bechdel.csv scripts/05-model-KNN.R
 	Rscript scripts/05-model-KNN.R \
-		--input="results/eda_summary.txt" \
+		--input="results/clean_bechdel.csv" \
 		--output="results/knn_preds.csv" 
 
 # render quarto report in HTML and PDF 
