@@ -15,15 +15,15 @@ main <- function(input, output, output_results) {
   movie_data <- bechdel[, c("budget", "domgross")]
   movie_data <- movie_data %>% mutate(budget = as.numeric(budget), domgross = as.numeric(domgross))
 
-  dir.create(output_results, recursive = TRUE, showWarnings = FALSE)
+#  dir.create(output_results, recursive = TRUE, showWarnings = FALSE)
   dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
 
-  write.csv(head(movie_data, 6), paste0(output_results, "/table1_first_six_rows.csv"), row.names = FALSE)
+  write.csv(head(movie_data, 6), paste0(output_results, "table1_first_six_rows.csv"), row.names = FALSE)
 
   movie_data <- movie_data %>%
     filter(!is.na(budget), !is.na(domgross))
 
-  write.csv(movie_data[movie_data$domgross == 0, ], paste0(output_results, "/table2_zero_revenue.csv"), row.names = FALSE)
+  write.csv(movie_data[movie_data$domgross == 0, ], paste0(output_results, "table2_zero_revenue.csv"), row.names = FALSE)
 
   movie_data <- movie_data %>%
     filter(budget > 0, domgross > 0)
