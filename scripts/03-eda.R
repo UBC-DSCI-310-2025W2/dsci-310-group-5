@@ -16,19 +16,19 @@ main <- function(input, output,output_data) {
   out <- dirname(output)
   dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
-  writeLines(capture.output(summary(movie_data )), paste0(out, "/eda_summary.csv"))
-  writeLines(capture.output(str(movie_data )), paste0(out, "/eda-movie_data.csv"))
+  writeLines(capture.output(summary(movie_data )), paste0(out, "/eda_summary.txt"))
+  writeLines(capture.output(str(movie_data )), paste0(out, "/eda-movie_data.txt"))
 
   png(paste0(out, "/figure1-eda_boxplot.png"))
   par(mfrow = c(1, 2))
-  boxplot(movie_data $budget, main = "Boxplot of Movie Budget", ylab = "Budget in USD")
-  boxplot(movie_data $domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue in USD")
+  boxplot(movie_data $budget, main = "Boxplot of Movie Budget", ylab = "Budget (USD)")
+  boxplot(movie_data $domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue (USD)")
   par(mfrow = c(1,1))
 
   png(paste0(out, "/figure2-eda_histogram.png"))
   par(mfrow = c(1, 2))
-  hist(movie_data $budget, main = "Histogram of Movie Budget", xlab = "Budget in USD")
-  hist(movie_data $domgross, main = "Histogram of Movie Revenue", xlab = "Revenue in USD")
+  hist(movie_data $budget, main = "Histogram of Movie Budget", xlab = "Budget (USD)")
+  hist(movie_data $domgross, main = "Histogram of Movie Revenue", xlab = "Revenue (USD)")
   par(mfrow = c(1,1))
 
   ggsave(paste0(out, "/figure3-eda_revenue_vs_budget.png"),
