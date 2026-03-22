@@ -1,7 +1,7 @@
 # date: 2026-03-16
 
-# declare clean and all targets as phoney targets
-.PHONEY: all clean data eda lr knn pdf html
+# declare phony targets (targets that don't produce a file)
+.PHONY: all clean
 
 # to generate all targets, run: make all
 all: results/NA_after_filter.txt results/NA_before_filter.txt results/eda-movie_data.csv results/eda-movie_data.txt \
@@ -158,8 +158,8 @@ results/table3_first_six_rows_log.csv: results/clean_bechdel.csv scripts/03-eda.
 # generate figures for linear regression 
 
 results/figure5_linear_regression_pred.png: results/clean_bechdel.csv scripts/04-model-linear_regression.R
-	Rscript results/clean_bechdel.csv \
-		--input="data/processed/clean_bechdel.csv" \
+	Rscript scripts/04-model-linear_regression.R \
+		--input="results/clean_bechdel.csv" \
 		--output="results/figure5_linear_regression_pred.png"
 
 results/table4_train_mean.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
@@ -170,7 +170,7 @@ results/table4_train_mean.csv: results/clean_bechdel.csv scripts/04-model-linear
 results/table5_test_mean.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
 		--input="results/clean_bechdel.csv" \
-		--output="results/table5_test_mean.csv:" 
+		--output="results/table5_test_mean.csv" 
 
 results/table6_linear_regression_preds.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
