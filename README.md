@@ -76,7 +76,6 @@ When finished, stop the container by pressing `Ctrl + C` in the terminal, then r
 ```bash
 docker compose down
 ```
-
 ## License Information
 The source code for this project is licensed under the MIT License.
 
