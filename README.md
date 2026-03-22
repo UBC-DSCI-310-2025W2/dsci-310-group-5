@@ -76,6 +76,34 @@ When finished, stop the container by pressing `Ctrl + C` in the terminal, then r
 ```bash
 docker compose down
 ```
+## Running the scripts
+You can run the following commands to run the scripts:
+```
+Rscript scripts/01-download_data.R --input="https://raw.githubusercontent.com/fivethirtyeight/data/master/bechdel/movies.csv" --output=data/raw/raw_bechdel.csv
+```
+```
+Rscript scripts/02-clean_data.R --input=data/raw/raw_bechdel.csv --output=data/processed/clean_bechdel.csv --output_results=results
+```
+```
+Rscript scripts/03-eda.R --input=data/processed/clean_bechdel.csv --output=results/eda 
+```
+```
+Rscript scripts/04-model-linear_regression.R --input=results/clean_bechdel.csv --output=results/linear_regression
+```
+```
+Rscript scripts/05-model-KNN.R --input=results/clean_bechdel.csv --output=results/knn
+```
+
+## Makefile 
+
+Please ensure that Docker has been set up according to the steps  specified under "Running the Analysis", prior to running any of the commands below. 
+
+To generate a PDF or HTML of the report, run `make pdf`, or `make html`. 
+
+To generate all the necessary files (e.g. figures, tables) for the quarto report, run `make all`. 
+
+The following commands can be used to generate the necessary files for specific parts of the report: `make data`, `make eda`, `make lr`, and `make knn`. Please see the [makefile](Makefile) for more details on what files are generated.
+
 ## License Information
 The source code for this project is licensed under the MIT License.
 
