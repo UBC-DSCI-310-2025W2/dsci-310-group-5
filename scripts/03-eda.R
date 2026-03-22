@@ -15,8 +15,8 @@ main <- function(input, output) {
   out <- dirname(output)
   dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
-  writeLines(capture.output(summary(movie_data )), paste0(out, "/eda_summary.csv"))
-  writeLines(capture.output(str(movie_data )), paste0(out, "/eda-movie_data.csv"))
+  write.csv(as.data.frame(do.call(cbind, lapply(movie_data, summary))), paste0(out, "/eda_summary.csv"), row.names = TRUE)
+  write.csv(as.data.frame(lapply(movie_data, function(x) class(x))), paste0(out, "/eda-movie_data.csv"), row.names = FALSE)
 
   png(paste0(out, "/figure1-eda_boxplot.png"))
   par(mfrow = c(1, 2))
