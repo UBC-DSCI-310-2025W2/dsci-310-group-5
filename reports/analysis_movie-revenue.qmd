@@ -101,16 +101,22 @@ Here, we will look at some general summary statistics of our data:
 
 ```{r}
 #| vscode: {languageId: r}
-eda_summary <- readLines("../results/eda_summary.txt")
-cat(eda_summary, sep = "\n")
+#| label: tbl-eda-summary
+#| tbl-cap: "Summary statistics of the cleaned movie dataset"
+
+eda_summary <- read.csv("../results/eda_summary.csv")
+knitr::kable(head(eda_summary))
 ```
 
 Here, we will look at the general shape/values in our data:
 
 ```{r}
 #| vscode: {languageId: r}
-eda_str <- readLines("../results/eda-movie_data.txt")
-cat(eda_str, sep = "\n")
+#| label: tbl-eda-str
+#| tbl-cap: "Structure of the cleaned movie dataset"
+
+eda_str <- read.csv("../results/eda-movie_data.csv")
+knitr::kable(head(eda_str))
 ```
 
 Next, we will use different plots to examine the skew/behaviour of budget and revenue in the data. 
