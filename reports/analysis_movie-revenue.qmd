@@ -34,7 +34,7 @@ This study investigates how movie budget predicts domestic box office revenue us
 
 The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenue [@basuroy2003critical]. However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie [@devany1999uncertainty].
 
-Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. In this analysis, we use FiveThirtyEight's Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer the question: **How does movie budget predict movie revenue?** [@fivethirtyeight2014bechdel].
+Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns. 
 
 ## Research Question
 
@@ -42,6 +42,18 @@ How does movie budget predict movie revenue?
 
 ## The Data Set
 
+In this analysis, we use FiveThirtyEight's Bechdel Test dataset, which contains descriptive information, production budgets and domestic box office revenue of 1,615 films released between 1990 and 2013 to answer our research question [@fivethirtyeight2014bechdel].
+
+Here, we take a look at the first couple rows of the raw data. 
+
+```{r}
+#| vscode: {languageId: r}
+#| label: tbl-movie-data-raw
+#| tbl-cap: "First 6 rows of the raw data"
+
+movie_data_raw <- read.csv("../raw/raw_bechdel.csv")
+knitr::kable(head(movie_data_raw))
+```
 
 ## Cleaning Data
 
@@ -55,7 +67,6 @@ Since our research question only requires studying 2 variables (movie budget - "
 movie_data <- read.csv("../results/table1_first_six_rows.csv")
 knitr::kable(head(movie_data))
 ```
-
 
 Next, we will check our data for any null values and filter them out if there are any.
 
