@@ -51,7 +51,7 @@ Here, we take a look at the first couple rows of the raw data.
 #| label: tbl-movie-data-raw
 #| tbl-cap: "First 6 rows of the raw data"
 
-movie_data_raw <- read.csv("../raw/raw_bechdel.csv")
+movie_data_raw <- read.csv("../data/raw/raw_bechdel.csv")
 knitr::kable(head(movie_data_raw))
 ```
 
