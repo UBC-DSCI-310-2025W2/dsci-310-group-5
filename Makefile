@@ -46,7 +46,7 @@ html: reports/analysis_movie-revenue.html
 
 # generating cleaned dataframe and cleaned data outputs 
 
-data/processed/clean_bechdel.csv results/table1_first_six_rows results/table2_zero_revenue: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
+results data/processed/clean_bechdel.csv: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
 	Rscript scripts/02-clean_data.R \
 		--input="data/raw/raw_bechdel.csv" \
 		--output="data/processed/clean_bechdel.csv" \
@@ -235,10 +235,10 @@ results/table11_knn_metrics.csv: results/clean_bechdel.csv scripts/05-model-KNN.
 		--output="results/table11_knn_metrics.csv" 
 
 # render quarto report in HTML and PDF 
-reports/analysis_movie-revenue.html: reports/analysis_movie-revenue.qmd
+reports/analysis_movie-revenue.html: results reports/analysis_movie-revenue.qmd
 	quarto render reports/analysis_movie-revenue.qmd --to html
 
-reports/analysis_movie-revenue.pdf: reports/analysis_movie-revenue.qmd
+reports/analysis_movie-revenue.pdf: results reports/analysis_movie-revenue.qmd
 	quarto render reports/analysis_movie-revenue.qmd --to pdf
 
 # to clean/delete all target files generated for quarto document, run: make clean
