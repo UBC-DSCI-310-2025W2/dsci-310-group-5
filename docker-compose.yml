@@ -1,6 +1,6 @@
 services:
   analysis:
-    image: audreyvo/dsci-310-group-5:latest
+    image: nikip901/movie-revenue-test:1514b9c
     ports:
       - "8888:8888"
     volumes:
