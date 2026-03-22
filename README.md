@@ -96,7 +96,7 @@ Rscript scripts/05-model-KNN.R --input=results/clean_bechdel.csv --output=result
 
 ## Makefile 
 
-Please ensure that Docker has been set up according to the steps  specified under "Running the Analysis", prior to running any of the commands below. 
+Please ensure that Docker has been set up according to the steps  specified under "Running the Analysis", prior to running any of the commands below in the terminal. 
 
 To generate a PDF or HTML of the report, run `make pdf`, or `make html`. 
 
