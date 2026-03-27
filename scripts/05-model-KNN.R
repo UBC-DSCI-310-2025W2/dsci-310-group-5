@@ -80,12 +80,11 @@ knn_preds <- knn_fit_min |>
 write.csv(knn_preds |> select(log_domgross_pred, log_budget, log_domgross), paste0(out, "/knn_preds.csv"), row.names = FALSE)
 
 p <- ggplot(knn_preds, aes(x = log_budget, y = log_domgross)) +
-  geom_point(alpha = 0.6) +
+  geom_point(alpha = 0.6) +                                
   geom_line(aes(y = log_domgross_pred), color = "blue") +
   labs(
-    title = "KNN Regression: Predicted vs Actual",
+    title = paste0("K = ", kmin),
     x = "Log(Movie Budget)",
     y = "Log(Domestic Revenue)"
-  ) + ggtitle(paste0("K = ", kmin)) +
-  theme_minimal()
+  )
 ggsave(paste0(out, "/figure6_knn_pred.png"), p)
