@@ -11,6 +11,8 @@ library(dplyr)
 library(ggplot2)
 library(tidymodels)
 
+source("R/scatterplot.R")
+
 opt <- docopt(doc)
 data <- read.csv(opt$input)
 out <- dirname(opt$output)
@@ -79,12 +81,15 @@ knn_preds <- knn_fit_min |>
   rename(log_domgross_pred = .pred)
 write.csv(knn_preds |> select(log_domgross_pred, log_budget, log_domgross), paste0(out, "/knn_preds.csv"), row.names = FALSE)
 
-p <- ggplot(knn_preds, aes(x = log_budget, y = log_domgross)) +
-  geom_point(alpha = 0.6) +                                
-  geom_line(aes(y = log_domgross_pred), color = "blue") +
-  labs(
-    title = paste0("K = ", kmin),
-    x = "Log(Movie Budget)",
-    y = "Log(Domestic Revenue)"
-  )
+p <- make_scatter_plot(
+  knn_preds,
+  log_budget,
+  log_domgross,
+  title = paste0("K = ", kmin),
+  x_lab = "Log(Movie Budget)",
+  y_lab = "Log(Domestic Revenue)",
+  smooth_method = NULL,
+  point_alpha = 0.6,
+  pred_line = "log_domgross_pred"
+)
 ggsave(paste0(out, "/figure6_knn_pred.png"), p)

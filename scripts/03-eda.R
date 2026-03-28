@@ -10,6 +10,8 @@ library(docopt)
 library(ggplot2)
 library(dplyr)
 
+source("R/scatterplot.R")
+
 main <- function(input, output) {
   movie_data  <- read.csv(input)
   out <- dirname(output)
@@ -31,8 +33,14 @@ main <- function(input, output) {
   par(mfrow = c(1,1))
 
   ggsave(paste0(out, "/figure3-eda_revenue_vs_budget.png"),
-    ggplot(movie_data , aes(budget, domgross)) + geom_point() + geom_smooth(method = "lm") +
-    labs(title = "Domestic Revenue vs Movie Budget", x = "Budget (USD)", y = "Revenue (USD)"))
+    make_scatter_plot(
+      movie_data,
+      budget,
+      domgross,
+      title = "Domestic Revenue vs Movie Budget",
+      x_lab = "Budget (USD)",
+      y_lab = "Revenue (USD)"
+    ))
 
   write.csv(data.frame(correlation = cor(movie_data $budget, movie_data $domgross)), paste0(out, "/eda_correlation.csv"), row.names = FALSE)
 
@@ -42,8 +50,14 @@ main <- function(input, output) {
   write.csv(movie_data, output, row.names = FALSE)
 
   ggsave(paste0(out, "/figure4-eda_log_revenue_vs_log_budget.png"),
-    ggplot(movie_data, aes(log_budget, log_domgross)) + geom_point() + geom_smooth(method = "lm") +
-    labs(title = "Log(Revenue) vs Log(Budget)", x = "Log(Budget)", y = "Log(Revenue)"))
+    make_scatter_plot(
+      movie_data,
+      log_budget,
+      log_domgross,
+      title = "Log(Revenue) vs Log(Budget)",
+      x_lab = "Log(Budget)",
+      y_lab = "Log(Revenue)"
+    ))
 
   write.csv(head(movie_data, 6), paste0(out, "/table3_first_six_rows_log.csv"), row.names = FALSE)
 
