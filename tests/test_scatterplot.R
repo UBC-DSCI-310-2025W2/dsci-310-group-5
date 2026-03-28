@@ -1,20 +1,24 @@
 library(testthat)
 library(ggplot2)
 
-if (file.exists("R/scatterplot.R")) {
-  source("R/scatterplot.R")
-} else {
-  source("../R/scatterplot.R")
-}
+source("../R/scatterplot.R")
 
-test_data <- data.frame(budget = c(1, 2, 3), domgross = c(2, 4, 6))
+# test input data
+
+test_data <- data.frame(
+  budget = c(1, 2, 3),
+  domgross = c(2, 4, 6)
+)
+
 test_data_knn <- data.frame(
   budget = c(1, 2, 3),
   domgross = c(2, 4, 6),
   domgross_pred = c(2.1, 4.1, 6.1)
 )
 
-test_that("make_scatter_plot returns ggplot with points and LM smooth", {
+# expected test outputs
+
+test_that("EDA default: ggplot with geom_point and geom_smooth (>= 2 layers)", {
   p <- make_scatter_plot(
     test_data,
     budget,
@@ -28,7 +32,7 @@ test_that("make_scatter_plot returns ggplot with points and LM smooth", {
   expect_true(length(b$plot$layers) >= 2)
 })
 
-test_that("make_scatter_plot supports se = FALSE (linear regression)", {
+test_that("Linear regression style: LM smooth with se = FALSE builds", {
   p <- make_scatter_plot(
     test_data,
     budget,
@@ -42,7 +46,7 @@ test_that("make_scatter_plot supports se = FALSE (linear regression)", {
   expect_s3_class(p, "ggplot")
 })
 
-test_that("make_scatter_plot supports pred_line without smooth (KNN)", {
+test_that("KNN style: points + pred line, no smooth", {
   p <- make_scatter_plot(
     test_data_knn,
     budget,
@@ -59,27 +63,38 @@ test_that("make_scatter_plot supports pred_line without smooth (KNN)", {
   expect_true(length(b$plot$layers) >= 2)
 })
 
-test_that("make_scatter_plot returns ggplot object from return()", {
-  p <- make_scatter_plot(test_data, budget, domgross, "t", "x", "y", smooth_method = NULL)
-  expect_true(inherits(p, "ggplot"))
-})
-
-test_that("make_scatter_plot sets title and axis labels in labs()", {
+test_that("Return value is a ggplot object", {
   p <- make_scatter_plot(
     test_data,
     budget,
     domgross,
-    title = "My title",
-    x_lab = "X axis",
-    y_lab = "Y axis",
+    "t",
+    "x",
+    "y",
     smooth_method = NULL
   )
-  expect_equal(p$labels$title, "My title")
-  expect_equal(p$labels$x, "X axis")
-  expect_equal(p$labels$y, "Y axis")
+  expect_true(inherits(p, "ggplot"))
 })
 
-test_that("make_scatter_plot uses pred_line_color for the prediction line", {
+test_that("labs() receives title and axis labels", {
+  expected_title <- "My title"
+  expected_x <- "X axis"
+  expected_y <- "Y axis"
+  p <- make_scatter_plot(
+    test_data,
+    budget,
+    domgross,
+    title = expected_title,
+    x_lab = expected_x,
+    y_lab = expected_y,
+    smooth_method = NULL
+  )
+  expect_equal(p$labels$title, expected_title)
+  expect_equal(p$labels$x, expected_x)
+  expect_equal(p$labels$y, expected_y)
+})
+
+test_that("pred_line_color is passed to geom_line", {
   p <- make_scatter_plot(
     test_data_knn,
     budget,
@@ -93,4 +108,47 @@ test_that("make_scatter_plot uses pred_line_color for the prediction line", {
   )
   line_layer <- p$layers[[2]]
   expect_equal(line_layer$aes_params$colour, "red")
+})
+
+test_that("points only: one layer when smooth and pred_line are NULL", {
+  p <- make_scatter_plot(
+    test_data,
+    budget,
+    domgross,
+    title = "Points only",
+    x_lab = "x",
+    y_lab = "y",
+    smooth_method = NULL,
+    pred_line = NULL
+  )
+  expect_length(p$layers, 1L)
+})
+
+# error test cases
+
+test_that("error when pred_line names a column not in data", {
+  p <- make_scatter_plot(
+    test_data,
+    budget,
+    domgross,
+    title = "t",
+    x_lab = "x",
+    y_lab = "y",
+    smooth_method = NULL,
+    pred_line = "no_such_column"
+  )
+  expect_error(ggplot_build(p), regexp = "not found")
+})
+
+test_that("error when x aesthetic references a column not in data", {
+  p <- make_scatter_plot(
+    test_data,
+    !!rlang::sym("not_a_column"),
+    domgross,
+    title = "t",
+    x_lab = "x",
+    y_lab = "y",
+    smooth_method = NULL
+  )
+  expect_error(ggplot_build(p), regexp = "aesthetics|not found")
 })
