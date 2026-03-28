@@ -2,9 +2,22 @@
 #'
 #'
 #' @param data A data frame that includes the columns to be dropped
-#' @param columns A vector of column names
+#' @param columns A character vector of column names to drop
 #'
 #' @return A new data frame with the specified columns dropped
+#' 
+#' @examples 
+#' drop_columns(data.frame(a = c(1, 2, 3),
+#'                         b = c(4, 5, 6),
+#'                         c = c(7, 8, 9)), c("a", "c"))
+#' drop_columns(data.frame(a = c(1, 2, 3),
+#'                         b = c(4, 5, 6),
+#'                         c = c(7, 8, 9)), "b")
+#'                         
+#' If 'columns' argument is null, the original data frame is returned unchanged
+#' An error is thrown if a column name in 'columns' does not exist in 'data'.
+#'                         
+#' @export
 
 drop_columns <- function(data, columns) {
   if (!is.data.frame(data)) {
