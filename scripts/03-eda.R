@@ -10,6 +10,8 @@ library(docopt)
 library(ggplot2)
 library(dplyr)
 
+source("R/log_transform.R")
+
 main <- function(input, output) {
   movie_data  <- read.csv(input)
   out <- dirname(output)
@@ -37,7 +39,10 @@ main <- function(input, output) {
   write.csv(data.frame(correlation = cor(movie_data $budget, movie_data $domgross)), paste0(out, "/eda_correlation.csv"), row.names = FALSE)
 
   movie_data <- movie_data %>%
-    mutate(log_budget = log(budget), log_domgross = log(domgross))
+    mutate(
+      log_budget = log_transform(budget, col_name = "budget"),
+      log_domgross = log_transform(domgross, col_name = "domgross")
+    )
 
   write.csv(movie_data, output, row.names = FALSE)
 
