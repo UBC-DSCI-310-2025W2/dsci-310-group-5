@@ -15,12 +15,14 @@ RUN apt-get update && apt-get install -y \
     git \
     python3-pip \
     pandoc \
+    cmake \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Jupyter (pinned version)
+# Install Jupyter
 RUN pip3 install jupyterlab==4.3.4 --break-system-packages
 
-# Install Quarto (pinned version)
+# Install Quarto
 RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.36/quarto-1.9.36-linux-amd64.deb \
     && dpkg -i quarto-1.9.36-linux-amd64.deb \
     && rm quarto-1.9.36-linux-amd64.deb
@@ -28,7 +30,7 @@ RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.36/quar
 # Install TinyTeX for PDF rendering
 RUN quarto install tinytex --no-prompt
 
-# Install R packages and register IRkernel in a single RUN
+# Install R packages and register IRkernel
 # knitr and rmarkdown are required by Quarto to render .qmd files
 RUN R -e "install.packages(c('renv', 'IRkernel', 'knitr', 'rmarkdown'), repos='https://cloud.r-project.org'); IRkernel::installspec(user=FALSE)"
 
