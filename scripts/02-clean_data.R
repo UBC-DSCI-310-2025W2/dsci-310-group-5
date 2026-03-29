@@ -10,9 +10,12 @@ Options:
 library(docopt)
 library(dplyr)
 
+source("R/drop-columns.R")
+
 main <- function(input, output, output_results) {
   bechdel <- read.csv(input)
-  movie_data <- bechdel[, c("budget", "domgross")]
+  cols_to_drop <- setdiff(names(bechdel), c("budget", "domgross"))
+  movie_data <- drop_columns(bechdel, cols_to_drop)
   movie_data <- movie_data %>% mutate(budget = as.numeric(budget), domgross = as.numeric(domgross))
 
   dir.create(output_results, recursive = TRUE, showWarnings = FALSE)
