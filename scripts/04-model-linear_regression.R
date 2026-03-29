@@ -11,6 +11,8 @@ library(dplyr)
 library(ggplot2)
 library(tidymodels)
 
+source("R/scatterplot.R")
+
 opt <- docopt(doc)
 data <- read.csv(opt$input)
 out <- dirname(opt$output)
@@ -34,11 +36,16 @@ preds <- predict(lm, test) |> bind_cols(test)
 preds <- preds |> rename(log_domgross_preds = ...1) |> select(log_domgross_preds, log_budget, log_domgross)
 write.csv(preds, paste0(out, "/table6_linear_regression_preds.csv"), row.names = FALSE)
 
-preds_plot <- preds |>
-  ggplot(aes(x = log_budget, y = log_domgross)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-    labs(title = "Log(Revenue) vs Log(Budget)", x = "Log(Budget)", y = "Log(Revenue)")
+preds_plot <- make_scatter_plot(
+  preds,
+  log_budget,
+  log_domgross,
+  title = "Log(Revenue) vs Log(Budget)",
+  x_lab = "Log(Budget)",
+  y_lab = "Log(Revenue)",
+  smooth_method = "lm",
+  se = FALSE
+)
 ggsave(paste0(out, "/figure5_linear_regression_pred.png"), preds_plot)
 
 metrics <- metrics(preds, truth = log_domgross, estimate = log_domgross_preds) |>
