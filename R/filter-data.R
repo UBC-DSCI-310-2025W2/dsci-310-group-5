@@ -1,20 +1,33 @@
-#' Filters out values of 0 from all numeric columns in a given dataset
+#' Filters out values of 0 from all numeric and character columns in a given data frame.
 #'
-#' @param data A dataframe with at least one numeric vector. 
+#' @param data A data frame with at least one numeric vector. 
 #'
-#' @return A numeric vector where all rows with a value of 0 are filtered out 
-
-data <- data.frame(a = c(0,1,2,3),
-                   b = c(1,2,3,4))
+#' @return A data frame where all rows with a numeric or character value of 0 in any column are filtered out. 
+#' If there are no 0s, original data frame is returned.  
+#' Indexes (row names) will contain the same values as the original data frame.
+#' Rows containing the string "zero" will not be filtered. 
+#' 
+#' @examples 
+#' filter_data(data.frame(a = c(0, 0, 1, 2),
+#'                        b = c(1, 2, 3, 4),
+#'                        c = c("one", "two", "three", "four"))
+#'                  
+#' @export
 
 filter_data <- function(data) {
   if (!is.data.frame(data)) {
-    stop("Error: Input must be a dataframe")
+    stop("Error: Input must be a data frame")
   } 
-  if (if_all(data, !is.numeric)) { # referenced https://dplyr.tidyverse.org/reference/across.html 
-    stop("Error: dataframe must have a numeric column")
-  }
+  if (nrow(data) == 0) {
+    stop("Error: Data frame must have at least one row")
+  } 
   if (is.data.frame(data)) { 
-    numeric_columns <- colnames(data[, sapply(data, is.numeric)]) # referenced https://www.statology.org/r-get-column-names/
+    columns <- colnames(data) 
+    filtered_df <- data[apply(data!=0, 1, all), ] # referenced https://www.statology.org/r-remove-rows-with-any-zero/
+    indices <- row.names(data[apply(data!=0, 1, all), 0]) # https://www.statology.org/change-row-names-in-r/
+    filtered_df <- data.frame(filtered_df) 
+    colnames(filtered_df) <- columns 
+    row.names(filtered_df) <- indices
+    return(filtered_df)
   }
 }
