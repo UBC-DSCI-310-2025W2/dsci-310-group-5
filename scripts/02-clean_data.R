@@ -10,9 +10,13 @@ Options:
 library(docopt)
 library(dplyr)
 
+source("R/drop-columns.R")
+source("R/filter-data.R")
+
 main <- function(input, output, output_results) {
   bechdel <- read.csv(input)
-  movie_data <- bechdel[, c("budget", "domgross")]
+  cols_to_drop <- setdiff(names(bechdel), c("budget", "domgross"))
+  movie_data <- drop_columns(bechdel, cols_to_drop)
   movie_data <- movie_data %>% mutate(budget = as.numeric(budget), domgross = as.numeric(domgross))
 
   dir.create(output_results, recursive = TRUE, showWarnings = FALSE)
@@ -20,14 +24,47 @@ main <- function(input, output, output_results) {
 
   write.csv(head(movie_data, 6), paste0(output_results, "/table1_first_six_rows.csv"), row.names = FALSE)
 
+  NA_count <- sum(is.na(movie_data))
+  
+  writeLines(
+  paste("# of null values (before filtering):", NA_count),
+  file.path(output_results, "NA_before_filter.txt")
+)
+  
   movie_data <- movie_data %>%
     filter(!is.na(budget), !is.na(domgross))
 
+  NA_count <- sum(is.na(movie_data))
+  
+  writeLines(
+    paste("# of null values (after filtering):", NA_count),
+    file.path(output_results, "NA_after_filter.txt")
+  )
+  
+  writeLines(
+    paste(sum(movie_data$budget == 0)),
+    file.path(output_results, "no_budget_count.txt")
+  )
+  
+  writeLines(
+    paste(sum(movie_data$domgross == 0)),
+    file.path(output_results, "no_domgross_count.txt")
+  )
+  
   write.csv(movie_data[movie_data$domgross == 0, ], paste0(output_results, "/table2_zero_revenue.csv"), row.names = FALSE)
+  
+  movie_data <- filter_data(movie_data)
 
-  movie_data <- movie_data %>%
-    filter(budget > 0, domgross > 0)
-
+  writeLines(
+    paste(sum(movie_data$budget == 0)),
+    file.path(output_results, "no_budget_filtered.txt")
+  )
+  
+  writeLines(
+    paste(sum(movie_data$domgross == 0)),
+    file.path(output_results, "no_domgross_filtered.txt")
+  )
+  
   write.csv(movie_data, output, row.names = FALSE)
 }
 
