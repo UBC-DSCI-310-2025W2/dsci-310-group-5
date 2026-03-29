@@ -46,47 +46,19 @@ html: reports/analysis_movie-revenue.html
 
 # generating cleaned dataframe and cleaned data outputs 
 
-results data/processed/clean_bechdel.csv: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
+results data/processed/clean_bechdel.csv \
+results/NA_after_filter.txt \
+results/NA_before_filter.txt \
+results/no_budget_count.txt \
+results/no_budget_filtered.txt \
+results/no_domgross_count.txt \
+results/no_domgross_filtered.txt \
+results/table1_first_six_rows.csv \
+results/table2_zero_revenue.csv: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
 	Rscript scripts/02-clean_data.R \
 		--input="data/raw/raw_bechdel.csv" \
 		--output="data/processed/clean_bechdel.csv" \
 		--output_results="results/" 
-
-results/NA_after_filter.txt: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/raw/raw_bechdel.csv" \
-		--output="results/NA_after_filter.txt" \
-		--output_results="results/"
-
-results/NA_before_filter.txt: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/raw/raw_bechdel.csv" \
-		--output="results/NA_before_filter.txt" \
-		--output_results="results/"
-
-results/no_budget_count.txt: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/raw/raw_bechdel.csv" \
-		--output="results/no_budget_count.txt" \
-		--output_results="results/"
-
-results/no_budget_filtered.txt: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/raw/raw_bechdel.csv" \
-		--output="results/no_budget_filtered.txt" \
-		--output_results="results/"
-
-results/no_domgross_count.txt: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/raw/raw_bechdel.csv" \
-		--output="results/no_domgross_count.txt" \
-		--output_results="results/"
-
-results/no_domgross_filtered.txt: data/raw/raw_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/raw/raw_bechdel.csv" \
-		--output="results/no_domgross_filtered.txt" \
-		--output_results="results/"
 
 # generate figures for EDA 
 
@@ -140,16 +112,6 @@ results/clean_bechdel.csv: data/processed/clean_bechdel.csv scripts/03-eda.R
 		--input="data/processed/clean_bechdel.csv" \
 		--output="results/clean_bechdel.csv"
 
-results/table1_first_six_rows.csv: data/processed/clean_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/processed/clean_bechdel.csv" \
-		--output="results/table1_first_six_rows.csv" 
-
-results/table2_zero_revenue.csv: data/processed/clean_bechdel.csv scripts/02-clean_data.R 
-	Rscript scripts/02-clean_data.R \
-		--input="data/processed/clean_bechdel.csv" \
-		--output="results/table2_zero_revenue.csv"
-
 results/table3_first_six_rows_log.csv: results/clean_bechdel.csv scripts/03-eda.R
 	Rscript scripts/03-eda.R \
 		--input="results/clean_bechdel.csv" \
@@ -159,7 +121,7 @@ results/table3_first_six_rows_log.csv: results/clean_bechdel.csv scripts/03-eda.
 
 results/figure5_linear_regression_pred.png: results/clean_bechdel.csv scripts/04-model-linear_regression.R
 	Rscript scripts/04-model-linear_regression.R \
-		--input="results/clean_bechdel.csv" \
+		--input="data/processed/clean_bechdel.csv" \
 		--output="results/figure5_linear_regression_pred.png"
 
 results/table4_train_mean.csv: results/clean_bechdel.csv scripts/04-model-linear_regression.R
