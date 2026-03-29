@@ -99,12 +99,18 @@ test_that("`filter_data` returns the original data frame when given data with no
 # error/abnormal cases
 not_data_frame <- c(1, 2, 3, 0)
 
+string <- "data"
+
 empty_data_frame <- data.frame()
 
 na_input <- NA
 
 test_that("`filter_data` returns an error when the input provided is not a data frame", {
   expect_error(filter_data(not_data_frame))
+})
+
+test_that("`filter_data` returns an error when the input provided is not a data frame", {
+  expect_error(filter_data(string))
 })
 
 test_that("`filter_data` returns an error when the input provided is an empty data frame", {
