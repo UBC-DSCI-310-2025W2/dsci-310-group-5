@@ -11,6 +11,7 @@ library(docopt)
 library(dplyr)
 
 source("R/drop-columns.R")
+source("R/filter-data.R")
 
 main <- function(input, output, output_results) {
   bechdel <- read.csv(input)
@@ -28,8 +29,7 @@ main <- function(input, output, output_results) {
 
   write.csv(movie_data[movie_data$domgross == 0, ], paste0(output_results, "/table2_zero_revenue.csv"), row.names = FALSE)
 
-  movie_data <- movie_data %>%
-    filter(budget > 0, domgross > 0)
+  movie_data <- filter_data(movie_data)
 
   write.csv(movie_data, output, row.names = FALSE)
 }
