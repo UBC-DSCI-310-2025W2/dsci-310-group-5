@@ -10,9 +10,7 @@ library(docopt)
 library(ggplot2)
 library(dplyr)
 
-source("R/log_transform.R")
-
-source("R/scatterplot.R")
+library(wrangler)
 
 main <- function(input, output) {
   movie_data  <- read.csv(input)

@@ -11,7 +11,7 @@ library(dplyr)
 library(ggplot2)
 library(tidymodels)
 
-source("R/scatterplot.R")
+library(wrangler)
 
 opt <- docopt(doc)
 data <- read.csv(opt$input)
