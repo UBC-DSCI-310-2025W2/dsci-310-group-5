@@ -30,6 +30,8 @@ Key R packages include:
 | IRkernel | 1.3.2 |
 | kknn | 1.4.1 |
 
+This project also uses the [`wrangler`](https://github.com/UBC-DSCI-310-2025W2/wrangler) package, developed by the project team, which provides helper functions for data wrangling, transformation, and visualization used throughout the analysis.
+
 For the full list of dependencies and their pinned versions, see [`renv.lock`](renv.lock).
 
 More information about renv can be found [here](https://rstudio.github.io/renv/).
