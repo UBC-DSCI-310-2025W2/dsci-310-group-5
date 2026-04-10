@@ -1,7 +1,15 @@
+
 services:
+
   analysis:
-    image: nikip901/movie-revenue-test:c1461a1  # e.g. nikip901/movie-revenue-test:a1b2c3d
+
+    image: nikip901/movie-revenue-test:fa386cf
+
     ports:
+
       - "8888:8888"
+
     volumes:
+
       - .:/project
+
