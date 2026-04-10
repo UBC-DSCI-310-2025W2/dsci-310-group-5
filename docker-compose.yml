@@ -1,15 +1,11 @@
-
 services:
-
   analysis:
-
     image: nikip901/movie-revenue-test:fa386cf
-
     ports:
-
       - "8888:8888"
-
     volumes:
-
       - .:/project
+      - renv_library:/project/renv/library
 
+volumes:
+  renv_library:
