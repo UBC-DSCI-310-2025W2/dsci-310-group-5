@@ -5,6 +5,11 @@ format:
   html: 
     toc: true
     toc-depth: 3
+  pdf:
+    fig-pos: "H"
+    include-in-header:
+      text: |
+        \usepackage{float}
 execute: 
   echo: false
   message: false
@@ -49,10 +54,16 @@ Here, we take a look at the first couple rows of the raw data.
 ```{r}
 #| vscode: {languageId: r}
 #| label: tbl-movie-data-raw
-#| tbl-cap: "First 6 rows of the raw data"
-
+#| tbl-cap: "First 6 rows of the raw data (columns 1-8)"
 movie_data_raw <- read.csv("../data/raw/raw_bechdel.csv")
-knitr::kable(head(movie_data_raw))
+knitr::kable(head(movie_data_raw[, 1:8]))
+```
+
+```{r}
+#| vscode: {languageId: r}
+#| label: tbl-movie-data-raw-2
+#| tbl-cap: "First 6 rows of the raw data (columns 9-13)"
+knitr::kable(head(movie_data_raw[, 9:ncol(movie_data_raw)]))
 ```
 
 ## Cleaning Data
@@ -77,10 +88,12 @@ cat(NA_before_filter, sep = "\n")
 
 NA_after_filter <- readLines("../results/NA_after_filter.txt")
 cat(NA_after_filter, sep = "\n")
+
+zero_before_filter_data <- read.csv('../data/raw/raw_bechdel.csv')
 ```
 
 We will also check for any budget/revenue with a value of 0, since any movie with a $0 budget/revenue is most likely missing data.
-In checking, we found that before filtering, there was `r readLines("../results/no_budget_count.txt")` movies with no budget and `r readLines("../results/no_domgross_count.txt")` movie with no revenue. 
+In checking, we found that before filtering, there was `r sum(zero_before_filter_data$budget == 0)` movies with no budget and `r sum(zero_before_filter_data$domgross == 0)`` movie with no revenue. 
 
 
 After seeing there is one entry with a non-zero budget but $0 revenue, we will first check to see what this value looks like. Since the value has a very high budget, we will say this entry is most likely having its appropriate budget missing and filter it out of the data set. 
@@ -124,11 +137,11 @@ Next, we will use different plots to examine the skew/behaviour of budget and re
 In @fig-eda-boxplots, we can see there is a heavy right skew in both variables, seeing as most of the movies are clustered at the bottom with only few movies pulling the tail towards higher values.
 
 
-![Boxplots of Movie Budget and Revenue](../results/figure1-eda_boxplot.png){#fig-eda-boxplots}
+![Boxplots of Movie Budget and Revenue](../results/figure1-eda_boxplot.png){#fig-eda-boxplots  width=65% height=400px}
 
 In @fig-eda-histograms, we can once again observe how both variance are heavily right skewed, and like in the box plots above, we see only some movies with higher values which indicates we have some outliers in our data. In addition, after seeing both the box plot and histogram, we observe that the values have a very wide range and spread.
 
-![Histograms of Movie Budget and Revenue](../results/figure2-eda_histogram.png){#fig-eda-histograms}
+![Histograms of Movie Budget and Revenue](../results/figure2-eda_histogram.png){#fig-eda-histograms  width=65% height=400px}
 
 
 Next, we will look at the behaviour of movie budget with movie revenue on the untransformed data to help us gather an idea of how linear the relationship may be. From observing @fig-eda-rev-vs-bud, we can see that the data may have a positive linear relationship. The spread of the values are also very wide, making it difficult to conclude how strong this linear relationship may be.
