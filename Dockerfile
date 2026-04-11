@@ -39,7 +39,7 @@ COPY renv.lock .
 COPY renv/ renv/
 COPY .Rprofile* .
 
-ENV RENV_PATHS_LIBRARY /project/renv/library
+ENV RENV_PATHS_LIBRARY /usr/local/lib/R/site-library
 RUN R -e "renv::restore(prompt=FALSE)"
 
 COPY notebooks/analysis_movie-revenue.ipynb /project/notebooks/
