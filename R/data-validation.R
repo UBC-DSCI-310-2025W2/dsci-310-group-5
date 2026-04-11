@@ -10,10 +10,10 @@ validate_csv_file_format <- function(path) {
   agent <- interrogate(
     tbl |>
       create_agent(label = "csv_file_format") |>
-      col_exists(columns = bechdel_columns)
+      col_exists(columns = all_of(bechdel_columns))
   )
   if (!all(agent$validation_set$all_passed)) stop("Incorrect data file format.")
-  agent
+  # agent
 }
 
 # Correct column names
@@ -21,10 +21,10 @@ validate_column_names <- function(tbl) {
   agent <- interrogate(
     tbl |>
       create_agent(label = "bechdel_column_names") |>
-      col_exists(columns = bechdel_columns)
+      col_exists(columns = all_of(bechdel_columns))
   )
   if (!all(agent$validation_set$all_passed)) stop("Incorrect column names.")
-  agent
+  # agent
 }
 
 # Correct column names -log transformed data
@@ -32,10 +32,10 @@ validate_log_column_names <- function(tbl) {
   agent <- interrogate(
     tbl |>
       create_agent(label = "modeling_log_column_names") |>
-      col_exists(columns = bechdel_log_columns)
+      col_exists(columns = all_of(bechdel_log_columns))
   )
   if (!all(agent$validation_set$all_passed)) stop("Incorrect log transformed column names.")
-  agent
+  # agent
 }
 
 # No empty observations
@@ -46,7 +46,7 @@ no_empty_obs <- function(tbl) {
       rows_complete(columns = all_of(bechdel_columns))
   )
   if (!all(agent$validation_set$all_passed)) stop("Empty observations there.")
-  agent
+  # agent
 }
 
 # No empty observations - log transformed data
@@ -57,7 +57,7 @@ log_no_empty_obs <- function(tbl) {
       rows_complete(columns = all_of(bechdel_log_columns))
   )
   if (!all(agent$validation_set$all_passed)) stop("Empty (log) observations there.")
-  agent
+  # agent
 }
 
 # No duplicate observations
@@ -70,7 +70,7 @@ no_duplicate_obs <- function(tbl) {
   if (!all(agent$validation_set$all_passed)) {
     warning("Duplicate observations.", call. = FALSE)
   }
-  agent
+  # agent
 }
 
 # No duplicate observations - log transformed data
@@ -83,7 +83,7 @@ log_no_duplicate_obs <- function(tbl) {
   if (!all(agent$validation_set$all_passed)) {
     warning("Duplicate (log) observations.", call. = FALSE)
   }
-  agent
+  # agent
 }
 
 # Correct data types in each column
@@ -94,7 +94,7 @@ numeric_types <- function(tbl) {
       col_is_numeric(columns = all_of(bechdel_columns))
   )
   if (!all(agent$validation_set$all_passed)) stop("Incorrect data types in each column.")
-  agent
+  # agent
 }
 
 # Correct data types in each column - log transformed data
@@ -105,7 +105,7 @@ log_numeric_types <- function(tbl) {
       col_is_numeric(columns = all_of(bechdel_log_columns))
   )
   if (!all(agent$validation_set$all_passed)) stop("Incorrect data types in each (log) column.")
-  agent
+  # agent
 }
 
 # Missingness not beyond expected threshold
@@ -117,7 +117,7 @@ na_threshold <- function(tbl, max_prop = 0.1) {
       col_vals_lte(columns = max_na_prop, value = max_prop)
   )
   if (!all(agent$validation_set$all_passed)) stop("Missingness beyond expected threshold.")
-  agent
+  # agent
 }
 
 # Missingness not beyond expected threshold - log transformed data
@@ -129,7 +129,7 @@ log_na_threshold <- function(tbl, max_prop = 0.1) {
       col_vals_lte(columns = max_na_prop, value = max_prop)
   )
   if (!all(agent$validation_set$all_passed)) stop("Missingness beyond expected threshold (log transformed data).")
-  agent
+  # agent
 }
 
 # No outlier or anomalous values
@@ -141,7 +141,7 @@ no_outliers <- function(tbl) {
       col_vals_between(columns = domgross, left = 0, right = 1e12, na_pass = TRUE)
   )
   if (!all(agent$validation_set$all_passed)) stop("Outlier or anomalous values.")
-  agent
+  # agent
 }
 
 # No outlier or anomalous values - log transformed data
@@ -153,7 +153,7 @@ log_no_outliers <- function(tbl) {
       col_vals_between(columns = log_domgross, left = 0, right = 35, na_pass = TRUE)
   )
   if (!all(agent$validation_set$all_passed)) stop("Outlier or anomalous values (log transformed data).")
-  agent
+  # agent
 }
 
 # No anomalous correlations between target/response variable and features/explanatory variables
@@ -166,7 +166,7 @@ validate_correlation <- function(train) {
       col_vals_lt(columns = abs_r, value = 1)
   )
   if (!all(agent$validation_set$all_passed)) stop("Perfect correlation on train between log_domgross and log_budget.")
-  agent
+  # agent
 }
 
 validate_clean_bechdel <- function(tbl) {
