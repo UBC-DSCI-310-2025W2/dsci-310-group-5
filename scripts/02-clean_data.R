@@ -1,3 +1,6 @@
+# Filters the raw data to budget and domestic gross, coerces numeric types, removes invalid rows, 
+#and writes the cleaned table and summary output.
+
 "Usage:
   02-clean_data.R --input=<path> --output=<path> --output_results=<path>
 

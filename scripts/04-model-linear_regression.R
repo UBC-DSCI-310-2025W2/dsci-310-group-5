@@ -1,3 +1,4 @@
+# Performs linear regression analysis on the cleaned data.
 "Usage:
   04-model-linear_regression.R --input=<path> --output=<path>
 

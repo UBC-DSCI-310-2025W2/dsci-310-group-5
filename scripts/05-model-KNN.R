@@ -1,3 +1,5 @@
+# Performs KNN regression analysis on the cleaned data.
+
 "Usage:
   05-model-KNN.R --input=<path> --output=<path>
 

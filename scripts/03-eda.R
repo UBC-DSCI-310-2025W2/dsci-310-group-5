@@ -1,3 +1,4 @@
+# This script performs the EDA done in the analysis.
 "Usage:
   03-eda.R --input=<path> --output=<path> --output_results=<path>
 
