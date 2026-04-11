@@ -42,8 +42,11 @@ COPY .Rprofile* .
 RUN R -e "renv::restore(prompt=FALSE)" && \
     R -e "renv::isolate()"
 
+
 COPY notebooks/analysis_movie-revenue.ipynb /project/notebooks/
 COPY data/ /project/data/
 
 EXPOSE 8888
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]
+# CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]
+CMD Rscript -e "renv::restore(prompt=FALSE)" && \
+    jupyter lab --ip=0.0.0.0 --no-browser --allow-root --NotebookApp.token= --NotebookApp.password=
