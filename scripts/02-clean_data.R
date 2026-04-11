@@ -1,5 +1,4 @@
-# Filters the raw data to budget and domestic gross, coerces numeric types, removes invalid rows, 
-#and writes the cleaned table and summary output.
+# Reads raw CSV from --input, filters to budget and domestic gross, coerces types and drops invalid rows, writes clean_bechdel.csv to --output, and writes summary tables and text files under --output_results.
 
 "Usage:
   02-clean_data.R --input=<path> --output=<path> --output_results=<path>
@@ -18,8 +17,10 @@ source("R/filter-data.R")
 
 main <- function(input, output, output_results) {
   bechdel <- read.csv(input)
+  # Keep only budget and domestic gross for modeling
   cols_to_drop <- setdiff(names(bechdel), c("budget", "domgross"))
   movie_data <- drop_columns(bechdel, cols_to_drop)
+  # Coerce so non-numeric strings become NA
   movie_data <- movie_data %>% mutate(budget = as.numeric(budget), domgross = as.numeric(domgross))
 
   dir.create(output_results, recursive = TRUE, showWarnings = FALSE)
@@ -33,7 +34,7 @@ main <- function(input, output, output_results) {
   paste("# of null values (before filtering):", NA_count),
   file.path(output_results, "NA_before_filter.txt")
 )
-  
+  # Drop rows missing either outcome or predictor
   movie_data <- movie_data %>%
     filter(!is.na(budget), !is.na(domgross))
 
@@ -55,7 +56,7 @@ main <- function(input, output, output_results) {
   )
   
   write.csv(movie_data[movie_data$domgross == 0, ], paste0(output_results, "/table2_zero_revenue.csv"), row.names = FALSE)
-  
+  # Drop rows with 0 in any numeric column
   movie_data <- filter_data(movie_data)
 
   writeLines(
@@ -67,7 +68,6 @@ main <- function(input, output, output_results) {
     paste(sum(movie_data$domgross == 0)),
     file.path(output_results, "no_domgross_filtered.txt")
   )
-  
   write.csv(movie_data, output, row.names = FALSE)
 }
 

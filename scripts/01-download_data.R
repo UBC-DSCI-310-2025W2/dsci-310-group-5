@@ -1,4 +1,4 @@
-# Downloads the Bechdel Test movie CSV from the given URL and writes it to data/raw.
+# Downloads the Bechdel Test movie CSV from the given URL and writes it to data/raw: reads --input (URL) and writes one CSV to --output.
 
 "Usage:
   01-download_data.R --input=<url> --output=<path>
