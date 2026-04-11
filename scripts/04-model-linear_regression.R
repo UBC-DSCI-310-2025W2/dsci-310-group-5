@@ -15,7 +15,8 @@ source("R/scatterplot.R")
 
 opt <- docopt(doc)
 data <- read.csv(opt$input)
-out <- dirname(opt$output)
+# out <- dirname(opt$output)
+out <- opt$output
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
 set.seed(120)
