@@ -39,8 +39,8 @@ COPY renv.lock .
 COPY renv/ renv/
 COPY .Rprofile* .
 
-ENV RENV_PATHS_LIBRARY /usr/local/lib/R/site-library
-RUN R -e "renv::restore(prompt=FALSE)"
+RUN R -e "renv::restore(prompt=FALSE)" && \
+    R -e "renv::isolate()"
 
 COPY notebooks/analysis_movie-revenue.ipynb /project/notebooks/
 COPY data/ /project/data/
