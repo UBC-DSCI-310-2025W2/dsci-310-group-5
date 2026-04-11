@@ -1,6 +1,6 @@
 services:
   analysis:
-    image: nikip901/movie-revenue-test:697ea5d
+    image: nikip901/movie-revenue-test:4dc193c
     ports:
       - "8888:8888"
     volumes:
