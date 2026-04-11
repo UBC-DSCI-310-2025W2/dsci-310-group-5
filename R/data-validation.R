@@ -3,7 +3,6 @@ library(tidyselect)
 
 bechdel_columns <- c("budget", "domgross")
 bechdel_log_columns <- c("log_budget", "log_domgross")
-model_feature_cols <- c("log_budget")
 
 # Correct data file format
 validate_csv_file_format <- function(path) {
@@ -153,17 +152,15 @@ log_no_outliers <- function(tbl) {
   agent
 }
 
-# No anomalous correlations between features/explanatory variables (train data)
-feature_corr <- function(train, feature_cols = model_feature_cols, max_abs_cor = 0.9) {
-  x <- train[, feature_cols, drop = FALSE]
-  if (ncol(x) < 2) return(NULL)
-  corr_matrix <- cor(x, use = "pairwise.complete.obs")
-  mx <- max(abs(corr_matrix[row(corr_matrix) != col(corr_matrix)]))
+# No anomalous correlations between target/response variable and features/explanatory variables
+validate_correlation <- function(train) {
+  r <- cor(train$log_budget, train$log_domgross, use = "pairwise.complete.obs")
+  if (is.na(r)) stop("Correlation between target/response variable and features/explanatory variables is NA.")
   agent <- interrogate(
-    data.frame(max_abs_inter_feature_r = mx) |>
-      create_agent(label = "train_inter_feature_cor") |>
-      col_vals_lte(columns = max_abs_inter_feature_r, value = max_abs_cor)
+    data.frame(abs_r = abs(r)) |>
+      create_agent(label = "train_response_vs_log_budget_cor") |>
+      col_vals_lt(columns = abs_r, value = 1)
   )
-  if (!all(agent$validation_set$all_passed)) stop("Anomalous correlations between features/explanatory variables (train data)")
+  if (!all(agent$validation_set$all_passed)) stop("Perfect correlation on train between log_domgross and log_budget.")
   agent
 }
