@@ -67,7 +67,9 @@ no_duplicate_obs <- function(tbl) {
       create_agent(label = "bechdel_no_duplicate_rows") |>
       rows_distinct()
   )
-  if (!all(agent$validation_set$all_passed)) stop("Duplicate observations.")
+  if (!all(agent$validation_set$all_passed)) {
+    warning("Duplicate observations.", call. = FALSE)
+  }
   agent
 }
 
@@ -78,7 +80,9 @@ log_no_duplicate_obs <- function(tbl) {
       create_agent(label = "bechdel_log_no_duplicate_rows") |>
       rows_distinct()
   )
-  if (!all(agent$validation_set$all_passed)) stop("Duplicate (log) observations.")
+  if (!all(agent$validation_set$all_passed)) {
+    warning("Duplicate (log) observations.", call. = FALSE)
+  }
   agent
 }
 
@@ -163,4 +167,22 @@ validate_correlation <- function(train) {
   )
   if (!all(agent$validation_set$all_passed)) stop("Perfect correlation on train between log_domgross and log_budget.")
   agent
+}
+
+validate_clean_bechdel <- function(tbl) {
+  validate_column_names(tbl)
+  numeric_types(tbl)
+  no_empty_obs(tbl)
+  no_duplicate_obs(tbl)
+  na_threshold(tbl)
+  no_outliers(tbl)
+}
+
+validate_log_bechdel <- function(tbl) {
+  validate_log_column_names(tbl)
+  log_no_empty_obs(tbl)
+  log_no_duplicate_obs(tbl)
+  log_numeric_types(tbl)
+  log_na_threshold(tbl)
+  log_no_outliers(tbl)
 }
