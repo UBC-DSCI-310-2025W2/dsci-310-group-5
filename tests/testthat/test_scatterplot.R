@@ -127,28 +127,32 @@ test_that("points only: one layer when smooth and pred_line are NULL", {
 # error test cases
 
 test_that("error when pred_line names a column not in data", {
-  p <- make_scatter_plot(
-    test_data,
-    budget,
-    domgross,
-    title = "t",
-    x_lab = "x",
-    y_lab = "y",
-    smooth_method = NULL,
-    pred_line = "no_such_column"
+  expect_error(
+    make_scatter_plot(
+      test_data,
+      budget,
+      domgross,
+      title = "t",
+      x_lab = "x",
+      y_lab = "y",
+      smooth_method = NULL,
+      pred_line = "no_such_column"
+    ),
+    regexp = "Error: the following columns given are not in the data"
   )
-  expect_error(ggplot_build(p), regexp = "not found")
 })
 
 test_that("error when x aesthetic references a column not in data", {
-  p <- make_scatter_plot(
-    test_data,
-    !!rlang::sym("not_a_column"),
-    domgross,
-    title = "t",
-    x_lab = "x",
-    y_lab = "y",
-    smooth_method = NULL
+  expect_error(
+    make_scatter_plot(
+      test_data,
+      !!rlang::sym("not_a_column"),
+      domgross,
+      title = "t",
+      x_lab = "x",
+      y_lab = "y",
+      smooth_method = NULL
+    ),
+    regexp = "Error: 'x' column does not exist in 'data'"
   )
-  expect_error(ggplot_build(p), regexp = "aesthetics|not found")
 })
