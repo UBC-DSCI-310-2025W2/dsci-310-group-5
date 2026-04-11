@@ -29,6 +29,7 @@ Key R packages include:
 | fivethirtyeight | 0.6.2 |
 | IRkernel | 1.3.2 |
 | kknn | 1.4.1 |
+| pointblank | 0.12.3 |
 
 For the full list of dependencies and their pinned versions, see [`renv.lock`](renv.lock).
 
