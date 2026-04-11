@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.36">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,9 +10,6 @@
 
 <title>Predicting Movie Revenue From Movie Budget</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -28,6 +25,7 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -49,14 +47,15 @@ div.csl-indent {
 <script src="analysis_movie-revenue_files/libs/clipboard/clipboard.min.js"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="analysis_movie-revenue_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/popper.min.js"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="analysis_movie-revenue_files/libs/quarto-html/anchor.min.js"></script>
 <link href="analysis_movie-revenue_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="analysis_movie-revenue_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="analysis_movie-revenue_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="analysis_movie-revenue_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="analysis_movie-revenue_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="analysis_movie-revenue_files/libs/bootstrap/bootstrap-e20e3832253b47c6a8f132b1da000a72.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="analysis_movie-revenue_files/libs/bootstrap/bootstrap-d6a003b94517c951b2d65075d42fb01b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -84,7 +83,7 @@ div.csl-indent {
   <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a></li>
   <li><a href="#citations" id="toc-citations" class="nav-link" data-scroll-target="#citations">Citations</a></li>
   </ul>
-</nav>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="analysis_movie-revenue.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
 <main class="content" id="quarto-document-content">
 
@@ -119,7 +118,7 @@ div.csl-indent {
 </section>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenue <span class="citation" data-cites="basuroy2003critical">(<a href="#ref-basuroy2003critical" role="doc-biblioref">Basuroy et al. 2003</a>)</span>. However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie <span class="citation" data-cites="devany1999uncertainty">(<a href="#ref-devany1999uncertainty" role="doc-biblioref">De Vany and Walls 1999</a>)</span>.</p>
+<p>The financial performance of a film is often assumed to be strongly related to its production budget. Higher budgets allow studios to invest in elements such as well-known actors, special effects, marketing campaigns, and larger production teams, which are often assumed to influence audience appeal and box office revenue <span class="citation" data-cites="basuroy2003critical">(<a href="#ref-basuroy2003critical" role="doc-biblioref">Basuroy, Chatterjee, and Ravid 2003</a>)</span>. However, the extent to which movie budgets actually predict revenue remains uncertain, as many lower-budget films have seen significant success in the box office while some high-budget productions fail to recover the costs associated with making the movie <span class="citation" data-cites="devany1999uncertainty">(<a href="#ref-devany1999uncertainty" role="doc-biblioref">De Vany and Walls 1999</a>)</span>.</p>
 <p>Understanding the relationship between production budget and revenue can provide insight into whether increased financial investments reliably leads to higher financial returns.</p>
 <section id="research-question" class="level2">
 <h2 class="anchored" data-anchor-id="research-question">Research Question</h2>
@@ -137,7 +136,7 @@ Table&nbsp;1: First 6 rows of the raw data
 </figcaption>
 <div aria-describedby="tbl-movie-data-raw-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 2%">
 <col style="width: 5%">
@@ -296,7 +295,7 @@ Table&nbsp;2: First 6 rows of the data
 </figcaption>
 <div aria-describedby="tbl-movie-data-cleaned-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">budget</th>
@@ -354,7 +353,7 @@ Table&nbsp;3: Movies with a $0 revenue
 </figcaption>
 <div aria-describedby="tbl-movie-data-rev-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">budget</th>
@@ -386,7 +385,7 @@ Table&nbsp;4: Summary statistics of the cleaned movie dataset
 </figcaption>
 <div aria-describedby="tbl-eda-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">X</th>
@@ -441,7 +440,7 @@ Table&nbsp;5: Structure of the cleaned movie dataset
 </figcaption>
 <div aria-describedby="tbl-eda-str-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">budget</th>
@@ -515,7 +514,7 @@ Table&nbsp;6: First six rows with budget, domestic gross, and their log-transfor
 </figcaption>
 <div aria-describedby="tbl-movie-data-log-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">budget</th>
@@ -580,7 +579,7 @@ Table&nbsp;7: Mean log-budget and log-domestic revenue for the training set
 </figcaption>
 <div aria-describedby="tbl-train-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">train_log_budget_mean</th>
@@ -607,7 +606,7 @@ Table&nbsp;8: Mean log-budget and log-domestic revenue for the test set
 </figcaption>
 <div aria-describedby="tbl-test-mean-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">test_log_budget_mean</th>
@@ -658,7 +657,7 @@ Table&nbsp;9: Predicted log domestic revenue with the corresponding log-budget a
 </figcaption>
 <div aria-describedby="tbl-lm-preds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">log_domgross_preds</th>
@@ -722,7 +721,7 @@ Table&nbsp;10: RMSE of the linear regression model
 </figcaption>
 <div aria-describedby="tbl-lm-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">.metric</th>
@@ -756,7 +755,7 @@ Table&nbsp;11: Cross-validated RMSE for different K values in KNN regression (fi
 </figcaption>
 <div aria-describedby="tbl-knn-cv-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 14%">
 <col style="width: 11%">
@@ -848,7 +847,7 @@ Table&nbsp;12: The minimum RMSE.
 </figcaption>
 <div aria-describedby="tbl-knn-min-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 14%">
 <col style="width: 11%">
@@ -895,7 +894,7 @@ Table&nbsp;13: Cross-validated RMSE for KNN regression model at previously found
 </figcaption>
 <div aria-describedby="tbl-knn-cv-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">.metric</th>
@@ -931,7 +930,7 @@ Table&nbsp;14: RMSE of the KNN regression model
 </figcaption>
 <div aria-describedby="tbl-knn-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="cell caption-top table table-sm table-striped small">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;">.metric</th>
@@ -980,7 +979,7 @@ Figure&nbsp;6: Predicted values of log(movie revenue) (blue line) for the final 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Citations</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Citations</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-basuroy2003critical" class="csl-entry" role="listitem">
 Basuroy, Suman, Subimal Chatterjee, and S. Abraham Ravid. 2003. <span>“How Critical Are Critical Reviews? The Box Office Effects of Film Critics, Star Power, and Budgets.”</span> <em>Journal of Marketing</em> 67 (4): 103–17. <a href="https://doi.org/10.1509/jmkg.67.4.103.18692">https://doi.org/10.1509/jmkg.67.4.103.18692</a>.
 </div>
@@ -988,7 +987,7 @@ Basuroy, Suman, Subimal Chatterjee, and S. Abraham Ravid. 2003. <span>“How Cri
 De Vany, Arthur, and W. David Walls. 1999. <span>“Uncertainty in the Movie Industry: Does Star Power Reduce the Terror of the Box Office?”</span> <em>Journal of Cultural Economics</em> 23 (4): 285–318.
 </div>
 <div id="ref-fivethirtyeight2014bechdel" class="csl-entry" role="listitem">
-FiveThirtyEight. 2014. <em>Bechdel Test Movie List</em>. <a href="https://github.com/fivethirtyeight/data/tree/master/bechdel">https://github.com/fivethirtyeight/data/tree/master/bechdel</a>.
+FiveThirtyEight. 2014. <span>“Bechdel Test Movie List.”</span> <a href="https://github.com/fivethirtyeight/data/tree/master/bechdel">https://github.com/fivethirtyeight/data/tree/master/bechdel</a>.
 </div>
 <div id="ref-prag1994empirical" class="csl-entry" role="listitem">
 Prag, Jay, and James Casavant. 1994. <span>“An Empirical Study of the Determinants of Revenues and Marketing Expenditures in the Motion Picture Industry.”</span> <em>Journal of Cultural Economics</em> 18 (3): 217–35.
