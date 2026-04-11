@@ -12,12 +12,14 @@ library(docopt)
 library(ggplot2)
 library(dplyr)
 
+source("R/data-validation.R")
 source("R/log_transform.R")
 
 source("R/scatterplot.R")
 
 main <- function(input, output, output_results) {
   movie_data  <- read.csv(input)
+  validate_clean_bechdel(movie_data)
   out <- output_results
   dir.create(output, recursive = TRUE, showWarnings = FALSE)
   dir.create(out, recursive = TRUE, showWarnings = FALSE)
@@ -54,6 +56,7 @@ main <- function(input, output, output_results) {
       log_budget = log_transform(budget, col_name = "budget"),
       log_domgross = log_transform(domgross, col_name = "domgross")
     )
+  validate_log_bechdel(movie_data)
   path = file.path(output, "log_bechdel.csv")
   write.csv(movie_data, path, row.names = FALSE)
 
