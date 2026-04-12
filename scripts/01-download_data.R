@@ -10,9 +10,12 @@ Options:
 
 library(docopt)
 
+source("R/data-validation.R")
+
 main <- function(input, output) {
   dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
   write.csv(read.csv(input), output, row.names = FALSE)
+  validate_csv_file_format(output)
 }
 
 opt <- docopt(doc)

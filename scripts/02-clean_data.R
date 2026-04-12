@@ -12,10 +12,12 @@ Options:
 library(docopt)
 library(dplyr)
 
+source("R/data-validation.R")
 source("R/drop-columns.R")
 source("R/filter-data.R")
 
 main <- function(input, output, output_results) {
+  validate_csv_file_format(input)
   bechdel <- read.csv(input)
   # Keep only budget and domestic gross for modeling
   cols_to_drop <- setdiff(names(bechdel), c("budget", "domgross"))
@@ -58,6 +60,8 @@ main <- function(input, output, output_results) {
   write.csv(movie_data[movie_data$domgross == 0, ], paste0(output_results, "/table2_zero_revenue.csv"), row.names = FALSE)
   # Drop rows with 0 in any numeric column
   movie_data <- filter_data(movie_data)
+
+  validate_clean_bechdel(movie_data)
 
   writeLines(
     paste(sum(movie_data$budget == 0)),

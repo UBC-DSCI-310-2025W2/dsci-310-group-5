@@ -13,6 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(tidymodels)
 
+source("R/data-validation.R")
 source("R/scatterplot.R")
 
 opt <- docopt(doc)
@@ -25,6 +26,8 @@ set.seed(120)
 data_split <- initial_split(data, prop = 0.7)
 train <- training(data_split)
 test <- testing(data_split)
+
+validate_correlation(train)
 
 train_mean <- train |> summarize(train_log_budget_mean = mean(log_budget), train_log_domgross_mean = mean(log_domgross))
 test_mean <- test |> summarize(test_log_budget_mean = mean(log_budget), test_log_domgross_mean = mean(log_domgross))

@@ -13,6 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(tidymodels)
 
+source("R/data-validation.R")
 source("R/scatterplot.R")
 
 opt <- docopt(doc)
