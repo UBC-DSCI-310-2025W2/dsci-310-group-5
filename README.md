@@ -56,7 +56,7 @@ The analysis runs inside a Docker container to ensure a fully reproducible envir
 docker compose up
 ```
 
-Docker will pull the pinned image (`nikip901/movie-revenue-test:efa0e81`) and start a JupyterLab server. Wait until you see a line in the terminal like `http://127.0.0.1:8888/lab`.
+Docker will pull the pinned image (`nikip901/movie-revenue-test:3b93bd1`) and start a JupyterLab server. Wait until you see a line in the terminal like `http://127.0.0.1:8888/lab`.
 
 ### Step 2 — Open JupyterLab
 

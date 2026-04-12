@@ -1,11 +1,10 @@
 services:
   analysis:
-    image: nikip901/movie-revenue-test:efa0e81
+    image: nikip901/movie-revenue-test:3b93bd1
+    pull_policy: always
     ports:
       - "8888:8888"
     volumes:
       - .:/project
-      - renv_library:/project/renv/library
-
-volumes:
-  renv_library:
+    environment:
+      - RENV_PATHS_LIBRARY=/renv/library
