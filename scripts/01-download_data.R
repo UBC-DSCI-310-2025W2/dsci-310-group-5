@@ -1,3 +1,5 @@
+# Downloads the Bechdel Test movie CSV from the given URL and writes it to data/raw: reads --input (URL) and writes one CSV to --output.
+
 "Usage:
   01-download_data.R --input=<url> --output=<path>
 
@@ -8,9 +10,12 @@ Options:
 
 library(docopt)
 
+source("R/data-validation.R")
+
 main <- function(input, output) {
   dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
   write.csv(read.csv(input), output, row.names = FALSE)
+  validate_csv_file_format(output)
 }
 
 opt <- docopt(doc)
