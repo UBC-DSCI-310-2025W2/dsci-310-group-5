@@ -31,6 +31,8 @@ Key R packages include:
 | kknn | 1.4.1 |
 | pointblank | 0.12.3 |
 
+This project also uses the [`wrangler`](https://github.com/UBC-DSCI-310-2025W2/wrangler) package, developed by the project team, which provides helper functions for data wrangling, transformation, and visualization used throughout the analysis.
+
 For the full list of dependencies and their pinned versions, see [`renv.lock`](renv.lock).
 
 More information about renv can be found [here](https://rstudio.github.io/renv/).
@@ -54,7 +56,7 @@ The analysis runs inside a Docker container to ensure a fully reproducible envir
 docker compose up
 ```
 
-Docker will pull the pinned image (`nikip901/movie-revenue-test:fa386cf`) and start a JupyterLab server. Wait until you see a line in the terminal like `http://127.0.0.1:8888/lab`.
+Docker will pull the pinned image (`nikip901/movie-revenue-test:efa0e81`) and start a JupyterLab server. Wait until you see a line in the terminal like `http://127.0.0.1:8888/lab`.
 
 ### Step 2 — Open JupyterLab
 

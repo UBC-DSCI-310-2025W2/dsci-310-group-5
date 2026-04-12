@@ -13,11 +13,7 @@ Options:
 library(docopt)
 library(ggplot2)
 library(dplyr)
-
-source("R/data-validation.R")
-source("R/log_transform.R")
-
-source("R/scatterplot.R")
+library(wrangler)
 
 main <- function(input, output, output_results) {
   movie_data  <- read.csv(input)

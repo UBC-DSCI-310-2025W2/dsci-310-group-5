@@ -11,10 +11,7 @@ Options:
 
 library(docopt)
 library(dplyr)
-
-source("R/data-validation.R")
-source("R/drop-columns.R")
-source("R/filter-data.R")
+library(wrangler)
 
 main <- function(input, output, output_results) {
   validate_csv_file_format(input)
