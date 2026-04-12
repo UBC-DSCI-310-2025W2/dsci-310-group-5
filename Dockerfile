@@ -46,4 +46,4 @@ COPY notebooks/analysis_movie-revenue.ipynb /project/notebooks/
 COPY data/ /project/data/
 
 EXPOSE 8888
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]ARG TARGETPLATFORM=linux/amd64
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--ServerApp.token=", "--ServerApp.password="]
