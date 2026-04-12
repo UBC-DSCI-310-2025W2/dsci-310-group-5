@@ -5,6 +5,7 @@ services:
       - "8888:8888"
     volumes:
       - .:/project
+      - renv_library:/project/renv/library
 
 volumes:
   renv_library:
