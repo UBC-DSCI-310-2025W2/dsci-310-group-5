@@ -29,6 +29,7 @@ Key R packages include:
 | fivethirtyeight | 0.6.2 |
 | IRkernel | 1.3.2 |
 | kknn | 1.4.1 |
+| pointblank | 0.12.3 |
 
 This project also uses the [`wrangler`](https://github.com/UBC-DSCI-310-2025W2/wrangler) package, developed by the project team, which provides helper functions for data wrangling, transformation, and visualization used throughout the analysis.
 
