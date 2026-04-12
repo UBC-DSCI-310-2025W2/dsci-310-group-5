@@ -70,7 +70,7 @@ http://localhost:8888/lab
 
 In JupyterLab, open `notebooks/analysis_movie-revenue.ipynb` and select **Kernel → Restart Kernel and Run All Cells**.
 
-### Step 4 — Stop the container
+### Step 4 — Stop the container 
 
 When finished, stop the container by pressing `Ctrl + C` in the terminal, then run:
 
