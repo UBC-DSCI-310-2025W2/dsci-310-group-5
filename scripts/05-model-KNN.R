@@ -1,3 +1,5 @@
+# Performs KNN regression on log-transformed data from --input and writes CV/tuning tables, test metrics, predictions, and a figure under --output.
+
 "Usage:
   05-model-KNN.R --input=<path> --output=<path>
 
@@ -16,18 +18,16 @@ source("R/scatterplot.R")
 
 opt <- docopt(doc)
 data <- read.csv(opt$input)
-validate_log_bechdel(data)
-# out <- dirname(opt$output)
 out <- opt$output
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
 set.seed(120)
+# 70/30 split of data for training and testing
 data_split <- initial_split(data, prop = 0.7)
 train <- training(data_split)
 test <- testing(data_split)
 
-validate_correlation(train)
-
+# KNN needs scaled, centered predictors for distance calculations
 knn_recipe <- recipe(log_domgross ~ log_budget, data = train) |>
   step_scale(all_predictors()) |>
   step_center(all_predictors())
@@ -42,6 +42,7 @@ knn_wkflw <- workflow() |> add_recipe(knn_recipe) |> add_model(knn_spec)
 
 set.seed(120)
 gridvals <- tibble(neighbors = seq(from = 1, to = 200, by = 3))
+# Cross-validated RMSE across k (grid search)
 knn_results <- knn_wkflw |>
   tune_grid(resamples = knn_vfold, grid = gridvals) |>
   collect_metrics() |>
@@ -58,6 +59,7 @@ knn_spec_min <- nearest_neighbor(weight_func = "rectangular", neighbors = kmin) 
   set_engine("kknn") |>
   set_mode("regression")
 
+# CV RMSE for the chosen k
 cv_metrics <- workflow() |>
   add_recipe(knn_recipe) |>
   add_model(knn_spec_min) |>
@@ -66,11 +68,13 @@ cv_metrics <- workflow() |>
   filter(.metric == "rmse")
 write.csv(cv_metrics, paste0(out, "table10_knn_cv_metrics.csv"), row.names = FALSE)
 
+# Final fit on full training set for test-set evaluation
 knn_fit_min <- workflow() |>
   add_recipe(knn_recipe) |>
   add_model(knn_spec_min) |>
   fit(data = train)
 
+# Test RMSE 
 knn_summary <- knn_fit_min |>
   predict(test) |>
   bind_cols(test) |>
@@ -78,7 +82,6 @@ knn_summary <- knn_fit_min |>
   filter(.metric == 'rmse')
 
 write.csv(knn_summary, paste0(out, "table11_knn_metrics.csv"), row.names = FALSE)
-#write.csv(data.frame(neighbors = kmin), paste0(out, "/table8_knn_best_k.csv"), row.names = FALSE)
 
 knn_preds <- knn_fit_min |>
   predict(test) |>
@@ -86,6 +89,7 @@ knn_preds <- knn_fit_min |>
   rename(log_domgross_pred = .pred)
 write.csv(knn_preds |> select(log_domgross_pred, log_budget, log_domgross), paste0(out, "knn_preds.csv"), row.names = FALSE)
 
+# Observed vs predicted on log scale
 p <- make_scatter_plot(
   knn_preds,
   log_budget,

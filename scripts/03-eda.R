@@ -1,3 +1,5 @@
+# This script performs the EDA for the analysis: reads cleaned data from --input, writes log_bechdel.csv under --output, and writes EDA tables and figures under --output_results.
+
 "Usage:
   03-eda.R --input=<path> --output=<path> --output_results=<path>
 
@@ -24,19 +26,21 @@ main <- function(input, output, output_results) {
   dir.create(output, recursive = TRUE, showWarnings = FALSE)
   dir.create(out, recursive = TRUE, showWarnings = FALSE)
 
+  # Tabular EDA: five-number summaries and column types
   write.csv(as.data.frame(do.call(cbind, lapply(movie_data, summary))), paste0(out, "eda_summary.csv"), row.names = TRUE)
   write.csv(as.data.frame(lapply(movie_data, function(x) class(x))), paste0(out, "eda-movie_data.csv"), row.names = FALSE)
 
+  # Boxplot of Movie Budget and Revenue
   png(paste0(out, "figure1-eda_boxplot.png"))
   par(mfrow = c(1, 2))
-  boxplot(movie_data $budget, main = "Boxplot of Movie Budget", ylab = "Budget in USD")
-  boxplot(movie_data $domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue in USD")
+  boxplot(movie_data$budget, main = "Boxplot of Movie Budget", ylab = "Budget in USD")
+  boxplot(movie_data$domgross, main = "Boxplot of Movie Revenue", ylab = "Revenue in USD")
   par(mfrow = c(1,1))
 
   png(paste0(out, "figure2-eda_histogram.png"))
   par(mfrow = c(1, 2))
-  hist(movie_data $budget, main = "Histogram of Movie Budget", xlab = "Budget in USD")
-  hist(movie_data $domgross, main = "Histogram of Movie Revenue", xlab = "Revenue in USD")
+  hist(movie_data$budget, main = "Histogram of Movie Budget", xlab = "Budget in USD")
+  hist(movie_data$domgross, main = "Histogram of Movie Revenue", xlab = "Revenue in USD")
   par(mfrow = c(1,1))
 
   ggsave(paste0(out, "figure3-eda_revenue_vs_budget.png"),
@@ -49,7 +53,7 @@ main <- function(input, output, output_results) {
       y_lab = "Revenue (USD)"
     ))
 
-  write.csv(data.frame(correlation = cor(movie_data $budget, movie_data $domgross)), paste0(out, "eda_correlation.csv"), row.names = FALSE)
+  write.csv(data.frame(correlation = cor(movie_data$budget, movie_data$domgross)), paste0(out, "eda_correlation.csv"), row.names = FALSE)
 
   movie_data <- movie_data %>%
     mutate(
