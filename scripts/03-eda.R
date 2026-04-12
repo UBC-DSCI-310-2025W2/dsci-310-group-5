@@ -14,6 +14,7 @@ library(docopt)
 library(ggplot2)
 library(dplyr)
 library(wrangler)
+source("R/data-validation.R")
 
 main <- function(input, output, output_results) {
   movie_data  <- read.csv(input)

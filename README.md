@@ -56,7 +56,7 @@ The analysis runs inside a Docker container to ensure a fully reproducible envir
 docker compose up
 ```
 
-Docker will pull the pinned image (`nikip901/movie-revenue-test:efa0e81`) and start a JupyterLab server. Wait until you see a line in the terminal like `http://127.0.0.1:8888/lab`.
+Docker will pull the pinned image (`nikip901/movie-revenue-test:3b93bd1`) and start a JupyterLab server. Wait until you see a line in the terminal like `http://127.0.0.1:8888/lab`.
 
 ### Step 2 — Open JupyterLab
 
@@ -80,21 +80,27 @@ When finished, stop the container by pressing `Ctrl + C` in the terminal, then r
 docker compose down
 ```
 ## Running the scripts
+
 You can run the following commands to run the scripts:
-```
+
+```bash
 Rscript scripts/01-download_data.R --input="https://raw.githubusercontent.com/fivethirtyeight/data/master/bechdel/movies.csv" --output=data/raw/raw_bechdel.csv
 ```
-```
+
+```bash
 Rscript scripts/02-clean_data.R --input=data/raw/raw_bechdel.csv --output=data/processed/clean_bechdel.csv --output_results=results
 ```
+
+```bash
+Rscript scripts/03-eda.R --input=data/processed/clean_bechdel.csv --output=data/processed/ --output_results=results/
 ```
-Rscript scripts/03-eda.R --input=data/processed/clean_bechdel.csv --output=results/eda 
+
+```bash
+Rscript scripts/04-model-linear_regression.R --input=data/processed/log_bechdel.csv --output=results/
 ```
-```
-Rscript scripts/04-model-linear_regression.R --input=results/clean_bechdel.csv --output=results/linear_regression
-```
-```
-Rscript scripts/05-model-KNN.R --input=results/clean_bechdel.csv --output=results/knn
+
+```bash
+Rscript scripts/05-model-KNN.R --input=data/processed/log_bechdel.csv --output=results/
 ```
 
 ## Makefile 

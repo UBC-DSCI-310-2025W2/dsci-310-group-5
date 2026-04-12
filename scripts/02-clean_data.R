@@ -12,6 +12,7 @@ Options:
 library(docopt)
 library(dplyr)
 library(wrangler)
+source("R/data-validation.R")
 
 main <- function(input, output, output_results) {
   validate_csv_file_format(input)

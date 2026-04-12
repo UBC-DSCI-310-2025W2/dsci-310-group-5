@@ -13,6 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(tidymodels)
 library(wrangler)
+source("R/data-validation.R")
 
 opt <- docopt(doc)
 data <- read.csv(opt$input)

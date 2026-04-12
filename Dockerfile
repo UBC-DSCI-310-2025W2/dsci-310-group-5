@@ -34,16 +34,19 @@ RUN quarto install tinytex --no-prompt
 # knitr and rmarkdown are required by Quarto to render .qmd files
 RUN R -e "install.packages(c('renv', 'IRkernel', 'knitr', 'rmarkdown'), repos='https://cloud.r-project.org'); IRkernel::installspec(user=FALSE)"
 
+ENV RENV_PATHS_LIBRARY /project/renv/library
+
 # Copy renv lockfile and restore packages
 COPY renv.lock .
 COPY renv/ renv/
 COPY .Rprofile* .
 
-ENV RENV_PATHS_LIBRARY /project/renv/library
-RUN R -e "renv::restore(prompt=FALSE)"
+RUN R -e "renv::restore(prompt=FALSE)" 
 
 COPY notebooks/analysis_movie-revenue.ipynb /project/notebooks/
 COPY data/ /project/data/
 
 EXPOSE 8888
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]
+# CMD ["jupyter", "lab", "--ip=0.0.0.0", "--no-browser", "--allow-root", "--ServerApp.token=", "--ServerApp.password="]
+CMD Rscript -e "renv::restore(prompt=FALSE)" && \
+    jupyter lab --ip=0.0.0.0 --no-browser --allow-root --ServerApp.token= --ServerApp.password=
